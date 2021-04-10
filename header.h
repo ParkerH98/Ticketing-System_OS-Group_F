@@ -16,15 +16,20 @@
 #include <arpa/inet.h> // needed for socket connections
 #include <pthread.h> // threads
 
-#define PORT 9007
+#define PORT 9008
 
+#define CUSTNAME_LEN 64
+#define DOB_LEN 16
+#define GENDER_LEN 2
+#define TRAVELDATE_LEN 16
 
-struct Query{
-    char employeeName[EMPLOYEENAME_LEN];
-    char jobTitle[JOBTITLE_LEN];
-    char status[STATUS_LEN];
+struct Reservation{
+    char customerName[CUSTNAME_LEN];
+    char dateOfBirth[DOB_LEN];
+    char gender[GENDER_LEN];
+    int govIDNumber;
+    char travelDate[TRAVELDATE_LEN];
+    int numberTravelers;
 };
-
-
 
 #endif

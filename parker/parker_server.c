@@ -1,18 +1,5 @@
 #include "../header.h"
 
-/*
----------------------------------------------------------
-THIS IS A FULLY WORKING TEST FUNCTION. THIS IS NOT IMPLEMENTED
-IN THE PROGRAM. WE DECIDED TO USE JOONMO'S SERVER FUNCTION INSTEAD.
-
-This function handles all socket connections on the server side.
-This functions binds and then begins listening for incoming
-client connections. The function then sends a result to the 
-client.
-
-Params: none
-Return: void
-*/
 void serverSocket_SendReceive()
 {
     int entrySocket, connectionSocket; // socket file descriptors
@@ -47,36 +34,22 @@ void serverSocket_SendReceive()
         printf("[-]Error in listening");
     }
 
-    // for (int i = 0; i < TESTING_LOOP; i++)
-    // {
-    //     // Accept call creates a new socket for the incoming connection
-    //     addr_size = sizeof serverStorage;
-    //     connectionSocket = accept(entrySocket, (struct sockaddr *)&serverStorage, &addr_size);
+    //Accept call creates a new socket for the incoming connection
+    addr_size = sizeof serverStorage;
 
-    //     struct Query query;
-    //     struct Query *queryPtr = &query;
+    connectionSocket = accept(entrySocket, (struct sockaddr *)&serverStorage, &addr_size);
+    printf("SERVER: Connected to client.\n");
 
-    //     recv(connectionSocket, queryPtr, sizeof(struct Query), 0);                                                                      //Read the message from the server into the buffer
-    //     printf("SERVER: Query received from assistant:\n\n%s\n%s\n%s\n", queryPtr->employeeName, queryPtr->jobTitle, queryPtr->status); //Print the received message
+    char message[256] = "What option would you like?";
+    send(connectionSocket, message, sizeof(message) + 1, 0);
 
-    //     struct EmployeeStructure employee;
-    //     struct EmployeeStructure *employeePtr = &employee;
+    char answer[2];
+    recv(connectionSocket, answer, sizeof(answer) + 1, 0); //Read the message from the server into the buffer
+    printf("SERVER: Selection [%s] was chosen by the customer.\n", answer);
+}
 
-    //     employeePtr->id = 15000;
-    //     strcpy(employeePtr->employeeName, "BRIAN BENSON");
-    //     strcpy(employeePtr->jobTitle, "IS BUSINESS ANALYST");
-    //     employeePtr->basePay = 78059.8;
-    //     employeePtr->overtimePay = 0;
-    //     employeePtr->benefit = 0;
-    //     strcpy(employeePtr->status, "FT");
-    //     employeePtr->satisfactionLevel = 0.37;
-    //     employeePtr->numberProject = 2;
-    //     employeePtr->averageMonthlyHours = 158;
-    //     employeePtr->yearsInCompany = 3;
-    //     employeePtr->workAccident = 0;
-    //     employeePtr->promotionsLast5Years = 0;
-
-    //     send(connectionSocket, employeePtr, sizeof(struct EmployeeStructure), 0);
-    //     printf("\nSERVER: Result sent to assistant.\n\n");
-    // }
+int main()
+{
+    serverSocket_SendReceive();
+    return 0;
 }
