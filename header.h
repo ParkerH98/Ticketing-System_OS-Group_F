@@ -1,5 +1,3 @@
-
-
 #ifndef HEADER_H
 #define HEADER_H
 
@@ -15,8 +13,17 @@
 #include <sys/socket.h> // needed for socket connections
 #include <arpa/inet.h> // needed for socket connections
 #include <pthread.h> // threads
+// #include <time.h> // time for random seed
 
-#define PORT 9008
+// parker's constants
+#define PORT 9076
+#define NUM_SERVERS 1
+#define BACKLOG 50
+#define THREAD_POOL_SIZE 2
+
+int *dequeue();
+void enqueue(int *client_socket);
+
 
 #define CUSTNAME_LEN 64
 #define DOB_LEN 16
