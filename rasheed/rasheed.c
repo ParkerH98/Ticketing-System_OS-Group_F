@@ -16,6 +16,7 @@ struct Customer
     int govt_id;      //government id
     int travel_date;  //date they will travel. Format YYYYMMDD
     int num_traveler; // number of traveler
+    bool seats[31];
 };
 
 struct Customer initializeCust(struct Customer a)
@@ -154,7 +155,7 @@ int main()
             scanf("%d", &a.govt_id);
             printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
             scanf("%d", &a.travel_date);
-            int reminder = availableFunction(a); //connect with files
+            int reminder = availableFunc'tion(a); //connect with files
             while (1)
             {
                 printf("Number of travelers: ");
