@@ -7,11 +7,11 @@ int receipt_num = 1; //please call this as global variable
 
 struct Customer
 {
-    int id; // receipt id
-    char name[50]; // name of the customer
-    int dob; // date of birth
-    char gender; // gender of the customer
-    int govt_id; //government id
+    int id;         // receipt id
+    char name[50];  // name of the customer
+    int dob;        // date of birth
+    char gender;    // gender of the customer
+    int govt_id;    //government id
     int travel_date; //date they will travel. Format YYYYMMDD
     int num_traveler; // number of traveler
     int seats[31]; //selected seats in the train

@@ -4,7 +4,7 @@
 
 // this is a test for you guys
 
-void clientSocket_SendReceive()
+void clientSocket_SendReceive(int port)
 {
     int clientSocket;
     struct sockaddr_in serverAddr;
@@ -18,9 +18,9 @@ void clientSocket_SendReceive()
         exit(1);
     }
 
-    serverAddr.sin_family = AF_INET;                               //Address family = Internet
-    serverAddr.sin_port = htons(PORT);                             //Set port number, using htons function to use proper byte order
-    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");           //Set IP address to localhost
+    serverAddr.sin_family = AF_INET; //Address family = Internet
+    serverAddr.sin_port = htons(port); //Set port number, using htons function to use proper byte order
+    serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Set IP address to localhost
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero); //Set all bits of the padding field to 0
 
     // Connect the socket to the server using the address struct
@@ -37,14 +37,33 @@ void clientSocket_SendReceive()
     printf("%s\n", received);
 
     char selection[2];
-    scanf("%s", selection);
+    // scanf("%s", selection);
+    int num = (rand() % (11 - 0 + 1)) + 0;
+    sprintf(selection, "%d", num);
+    // strcpy(selection, "1");
     send(clientSocket, selection, sizeof(selection) + 1, 0);
 
     close(clientSocket);
 }
 
+int printRandoms(int lower, int upper)
+{
+    int i;
+    // for (i = 0; i < count; i++)
+    // {
+    srand(time(NULL));
+    int num = (rand() % (upper - lower + 1)) + lower;
+    printf("%d ", num);
+    // }
+
+    return num;
+}
+
 int main()
 {
-    clientSocket_SendReceive();
+    // int port = printRandoms(PORT, PORT + 4);
+
+    clientSocket_SendReceive(PORT);
     return 0;
 }
+

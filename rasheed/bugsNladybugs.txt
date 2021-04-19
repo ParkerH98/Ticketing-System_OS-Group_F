@@ -1,0 +1,44 @@
+1. when you open a file with a+, it always creates one
+so the system never gets into the "if(fpt == NULL)" part.
+
+
+Check with this code I debugged it with
+//
+//
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+
+int main()
+{
+    FILE *fp = fopen("test.csv", "a+");
+    if(fp == NULL)
+    {
+        printf("sorry bro");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        char x[10];
+        fscanf(fp, "%s", x);
+        printf("%s\n", x);
+        fscanf(fp, "%s", x);
+        printf("%s\n", x);
+        fscanf(fp, "%s", x);
+        printf("%s\n", x);
+        fprintf(fp, "test4,");
+    }
+
+    fclose(fp);
+    return 0;
+}
+
+
+2. Another mistake I see is you are using printf(), instead of fprintf()
+so this is never writing on the files on my end.
+
+
+3. 
