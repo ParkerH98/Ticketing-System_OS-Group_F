@@ -145,8 +145,14 @@ struct Customer inquireTicket(int ticket) //file demo
 
 struct Customer modifyTicket( struct Customer a ) // file demo
 {
+    return a;
+};
 
-}
+struct Customer cancelTicket(ticket) //file demo
+{
+    struct Customer a;
+    return a;
+};
 
 int main()
 {
@@ -264,7 +270,7 @@ int main()
             printf("...\n");
             continue;
         }
-        if(choice == 3)
+        if(choice == 3) // modify the ticket
         {
             struct Customer a;
             int ticket;
@@ -285,9 +291,30 @@ int main()
             a.id = ticket;
             a = modifyTicket( a );
             printReceipt(a, 2); 
-
         }
 
+        if(choice == 4) // cancel the ticket
+        {
+            struct Customer a;
+            printf("Please enter the ticket number that you want to cancel: ");
+            int ticket;
+            scanf("%d", &ticket);
+            a = cancelTicket(ticket); // connect to files
+            a = printReceipt(a, 3); 
+
+            printf("We are really so to see you go. :(\n");
+            printf("Hogwarts will miss you!!!");
+
+            sleep(3);
+            printf("\nReturning back to menu.\n");
+            sleep(1);
+            printf("...\n");
+            sleep(1);
+            printf("...\n");
+            sleep(1);
+            printf("...\n");
+            continue;
+        }
     }  
     return 0;
 }
