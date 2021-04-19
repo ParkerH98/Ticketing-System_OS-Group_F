@@ -2,6 +2,8 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
+
 
 int receipt_num = 1; //please call this as global variable
 
