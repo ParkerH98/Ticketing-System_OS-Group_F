@@ -219,7 +219,8 @@ void server()
             //Confirmation
             printf("Do you want to make the reservation for Hogwarts? (y/n) ");
             char ans;
-            //scanf("%c", &ans);
+            
+            scanf("%c", &ans);
             ans = 'y';
             if (ans == 'n')
             {
