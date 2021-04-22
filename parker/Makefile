@@ -1,56 +1,41 @@
-
-SOBJS = parker_server_pool.o queue.o
-
-p: pool
-	clear
-	./pool
-
-pool: $(SOBJS)
-	gcc parker_server_pool.o -o pool
-
-parker_server_pool.o: parker_server_pool.c
-	gcc -c parker_server_pool.c queue.c
-	clear
+#==========================
+#		Constants
+#==========================
+CC = gcc
+CFLAGS = -Wall
+SOBJS = parker_server.o queue.o
+COBJS = parker_client.o
+EXECS = s c
+HEADER = ../header.h
 
 
-t: thread
-	clear
-	./thread
+#==========================
+#		Client
+#==========================
+obj/parker_client.o: parker_client.c $(HEADER)  # step 2
+	$(CC) $(CFLAGS) -c parker_client.c
 
-thread: parker_server_threads.o
-	gcc parker_server_threads.o -o thread
-
-parker_server_threads.o: parker_server_threads.c
-	gcc -c parker_server_threads.c
-	clear
-
+c: $(COBJS) # step 1
+	$(CC) $(CFLAGS) -o c $(COBJS)
+	
 
 
-s: server
-	clear
-	./server
+#==========================
+#		Server
+#==========================
+obj/parker_server.o: parker_server.c $(HEADER)  # step 3
+	$(CC) $(CFLAGS) -c parker_server.c
 
-server: parker_server.o
-	gcc parker_server.o -o server
+obj/queue.o: queue.c # step 2
+	$(CC) $(CFLAGS) -c queue.c
 
-parker_server.o: parker_server.c
-	gcc -c parker_server.c
+s: $(SOBJS) # step 1
+	$(CC) $(CFLAGS) -o s $(SOBJS) 
 	clear
 
-c: client
-	clear
-	./client
 
-client: parker_client.o
-	gcc parker_client.o -o client
-
-parker_client.o: parker_client.c
-	gcc -c parker_client.c
-	clear
-
+#==========================
+#		Utilities
+#==========================
 clean:
-	rm *.o server client thread
-
-
-# target: depenencies
-# 	action
+	rm *.o $(EXECS)

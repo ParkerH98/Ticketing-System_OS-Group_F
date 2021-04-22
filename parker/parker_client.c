@@ -1,9 +1,6 @@
 
 #include "../header.h"
 
-
-// this is a test for you guys
-
 void clientSocket_SendReceive(int port)
 {
     int clientSocket;
@@ -38,9 +35,9 @@ void clientSocket_SendReceive(int port)
 
     char selection[2];
     // scanf("%s", selection);
-    int num = (rand() % (11 - 0 + 1)) + 0;
-    sprintf(selection, "%d", num);
-    // strcpy(selection, "1");
+    // int num = (rand() % (11 - 0 + 1)) + 0;
+    // sprintf(selection, "%d", num);
+    strcpy(selection, "1");
     send(clientSocket, selection, sizeof(selection) + 1, 0);
 
     close(clientSocket);
