@@ -20,4 +20,19 @@
 #define BACKLOG 50
 #define THREAD_POOL_SIZE 2
 
+#define CUST_NAME_LEN 50
+#define NUM_SEATS 31 // +1 of desired seats because index 0 is unused
+
+struct Customer
+{
+    int id;         // receipt id
+    char name[CUST_NAME_LEN];  // name of the customer
+    int dob;        // date of birth
+    char gender;    // gender of the customer
+    int govt_id;    //government id
+    int travel_date; //date they will travel. Format YYYYMMDD
+    int num_traveler; // number of traveler
+    int seats[NUM_SEATS]; //selected seats in the train
+};
+
 #endif
