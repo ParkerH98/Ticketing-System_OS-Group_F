@@ -1,5 +1,4 @@
 #include "../header.h"
-// #include "queue.h"
 #include "queue.c"
 
 void *handleConnection(void *client_socket);
@@ -27,9 +26,9 @@ void serverSocket_SendReceive(int port)
     errorCheck(entrySocket = socket(PF_INET, SOCK_STREAM, 0), "Error creating socket"); // Create the socket
 
     // Configure settings of the server address struct
-    serverAddr.sin_family = AF_INET; //Address family = Internet
-    serverAddr.sin_port = htons(port); //Set port number, using htons function to use proper byte order
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); //Sets IP to accept from any IP address
+    serverAddr.sin_family = AF_INET;                               //Address family = Internet
+    serverAddr.sin_port = htons(port);                             //Set port number, using htons function to use proper byte order
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);                //Sets IP to accept from any IP address
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero); //Set all bits of the padding field to 0
 
     errorCheck(bind(entrySocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)), "Error in bind"); //Bind the address struct to the socket
@@ -41,7 +40,7 @@ void serverSocket_SendReceive(int port)
     while (1)
     {
         //Accept call creates a new socket for the incoming connection
-        // addr_size = sizeof(serverStorage);
+        addr_size = sizeof(serverStorage);
         connectionSocket = accept(entrySocket, (struct sockaddr *)&serverStorage, &addr_size);
         printf("SERVER: Connected to client\n");
 
@@ -56,20 +55,16 @@ void serverSocket_SendReceive(int port)
     }
 }
 
-
-void * thread_function(void *arg)
+void *thread_function(void *arg)
 {
     while (1)
     {
         int *client_socket;
-        
-        pthread_mutex_lock(&mutex);
-        // if ((client_socket = removeData()) == NULL)
-        // {
-            pthread_cond_wait(&condition_thread, &mutex);
-            client_socket = removeData();
 
-        // }
+        pthread_mutex_lock(&mutex);
+
+        pthread_cond_wait(&condition_thread, &mutex);
+        client_socket = removeData();
 
         pthread_mutex_unlock(&mutex);
 
@@ -119,7 +114,7 @@ int main()
             serverSocket_SendReceive(PORT + i);
             exit(0);
         }
-        }
+    }
     for (int i = 0; i < NUM_SERVERS; i++)
         wait(NULL);
 

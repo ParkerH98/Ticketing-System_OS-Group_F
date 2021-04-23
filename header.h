@@ -13,43 +13,11 @@
 #include <sys/socket.h> // needed for socket connections
 #include <arpa/inet.h> // needed for socket connections
 #include <pthread.h> // threads
-#include <stdbool.h> 
+#include <time.h> // time for random seed
 
-// #include <time.h> // time for random seed
-
-// parker's constants
 #define PORT 9085
 #define NUM_SERVERS 1
 #define BACKLOG 50
 #define THREAD_POOL_SIZE 2
-
-
-// int peek();
-
-// int isEmpty();
-
-// bool isFull();
-
-// int size();
-
-// void insert(int *data);
-
-// int removeData();
-
-
-
-#define CUSTNAME_LEN 64
-#define DOB_LEN 16
-#define GENDER_LEN 2
-#define TRAVELDATE_LEN 16
-
-struct Reservation{
-    char customerName[CUSTNAME_LEN];
-    char dateOfBirth[DOB_LEN];
-    char gender[GENDER_LEN];
-    int govIDNumber;
-    char travelDate[TRAVELDATE_LEN];
-    int numberTravelers;
-};
 
 #endif
