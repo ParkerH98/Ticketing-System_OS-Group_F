@@ -15,11 +15,13 @@
 #include <pthread.h> // threads
 #include <time.h> // time for random seed
 
+// SERVER CONSTANTS
 #define PORT 9085
-#define NUM_SERVERS 1
+#define NUM_SERVERS 2
 #define BACKLOG 50
-#define THREAD_POOL_SIZE 2
+#define THREAD_NUMBER 2
 
+// STRUCT CONSTANTS
 #define CUST_NAME_LEN 50
 #define NUM_SEATS 31 // +1 of desired seats because index 0 is unused
 

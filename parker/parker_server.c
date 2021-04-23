@@ -10,9 +10,9 @@ pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 void serverSocket_SendReceive(int port)
 {
-    pthread_t thread_pool[THREAD_POOL_SIZE];
+    pthread_t thread_pool[THREAD_NUMBER];
 
-    for (int i = 0; i < THREAD_POOL_SIZE; i++)
+    for (int i = 0; i < THREAD_NUMBER; i++)
     {
         pthread_create(&thread_pool[i], NULL, waitForWork, NULL);
     }
