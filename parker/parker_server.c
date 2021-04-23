@@ -3,7 +3,7 @@
 
 void *handleConnection(void *client_socket);
 int errorCheck(int returned, const char *errMsg);
-void *thread_function(void *);
+void *waitForWork(void *);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
@@ -14,7 +14,7 @@ void serverSocket_SendReceive(int port)
 
     for (int i = 0; i < THREAD_POOL_SIZE; i++)
     {
-        pthread_create(&thread_pool[i], NULL, thread_function, NULL);
+        pthread_create(&thread_pool[i], NULL, waitForWork, NULL);
     }
 
     int entrySocket, connectionSocket; // socket file descriptors
@@ -55,7 +55,7 @@ void serverSocket_SendReceive(int port)
     }
 }
 
-void *thread_function(void *arg)
+void *waitForWork(void *arg)
 {
     while (1)
     {
@@ -80,14 +80,36 @@ void *handleConnection(void *client)
     int client_socket = *((int *)client);
 
     printf("SERVER: Connected to client.\n");
-    fflush(stdout);
 
-    char message[256] = "What option would you like?";
+    char message[256] = "\n========================\n    Reservation Menu\n========================\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
     send(client_socket, message, sizeof(message) + 1, 0);
 
-    char answer[2];
-    recv(client_socket, answer, sizeof(answer) + 1, 0); //Read the message from the server into the buffer
-    printf("SERVER: Selection [%s] was chosen by the customer.\n", answer);
+    char selection[2];
+    recv(client_socket, selection, sizeof(selection) + 1, 0); //Read the message from the server into the buffer
+    printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
+    fflush(stdout);
+
+    if (selection == 1)
+    {
+        // makeReservation();
+    }
+    else if (selection == 2)
+    {
+        // inquiry();
+    }
+    else if (selection == 3)
+    {
+        // modifyReservation();
+    }
+    else if (selection == 4)
+    {
+        // cancelReservation();
+    }
+    else if (selection == 5)
+    {
+        exit(0);
+    }
+
     close(client_socket);
     return NULL;
 }
