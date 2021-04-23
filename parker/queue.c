@@ -1,84 +1,80 @@
-// #include "queue.h"
-#include <stdio.h>
-// #include <stdlib.h>
+#include <stdio.h> // print statements
+#include <stdlib.h> // malloc
 
-// Node *head = NULL;
-// Node *tail = NULL;
+#define QUEUE_SIZE 6
 
-// void enqueue(int *client_socket)
-// {
-//     Node *new_node = malloc(sizeof(Node));
-//     new_node->client_socket = client_socket;
-//     new_node->next = NULL;
-//     if (tail == NULL) {
-//         head = new_node;
-//     } else
-//     {
-//         tail->next = new_node;
-//     }
-//     tail = new_node;
-// }
+int intArray[QUEUE_SIZE];
+int front = 0;
+int rear = -1;
+int itemCount = 0;
 
-// int * dequeue()
-// {
-//     if (head == NULL)
-//     {
-//         return NULL;
-//     }
-//     else
-//     {
-//         int *result = head->client_socket;
-//         Node *temp = head;
-//         head = head->next;
-//         if (head == NULL) { tail = NULL; }
-//         free(temp);
-//         return result;
-//     }
-// }
-
-#include <stdlib.h>
-#include "queue.h"
-
-node_t *head = NULL;
-node_t *tail = NULL;
-
-void enqueue(int *client_socket)
+int peek()
 {
-    printf("ENQUEUE");
-    node_t *newnode = malloc(sizeof(node_t));
-    newnode->client_socket = client_socket;
-    newnode->next = NULL;
-    if (tail == NULL)
-    {
-        head = newnode;
-    }
-    else
-    {
-        tail->next = newnode;
-    }
-    tail = newnode;
+    return intArray[front];
 }
 
-//returns NULL if the queue is empty.
-//Returns the pointer to a client_socket, if there is one to get
-int *dequeue()
+int isEmpty()
 {
-    if (head == NULL)
+    if (itemCount == 0)
     {
-        // printf("NULLL");
+        return 1;
+    }
+
+    return 0;
+}
+
+int isFull()
+{
+    if (itemCount == QUEUE_SIZE)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int size()
+{
+    return itemCount;
+}
+
+void insert(int *data)
+{
+    if (itemCount != QUEUE_SIZE)
+    {
+        if (rear == QUEUE_SIZE - 1)
+        {
+            rear = -1;
+        }
+
+        intArray[++rear] = *data;
+        itemCount++;
+    }
+    printf("QUEUE: Count --> %d\n", itemCount);
+}
+
+int *removeData()
+{
+    if (itemCount == 0)
+    {
         return NULL;
     }
-    else
+
+    int *data = malloc(sizeof(int));
+    data = &intArray[front++];
+
+    if (front == QUEUE_SIZE)
     {
-        printf("NOT NULLL");
-        int *result = head->client_socket;
-        node_t *temp = head;
-        head = head->next;
-        if (head == NULL)
-        {
-            tail = NULL;
-        }
-        free(temp);
-        return result;
+        front = 0;
+    }
+
+    itemCount--;
+    return data;
+}
+
+void printQueue()
+{
+    for (int i = 0; i < QUEUE_SIZE; i++)
+    {
+        printf(" %d -->", intArray[i]);
     }
 }

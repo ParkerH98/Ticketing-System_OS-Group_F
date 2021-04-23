@@ -1,16 +1,23 @@
 #include "../header.h"
-#include "queue.h"
+// #include "queue.h"
+#include "queue.c"
+
 void *handleConnection(void *client_socket);
 int errorCheck(int returned, const char *errMsg);
-int *dequeue();
-void enqueue(int *client_socket);
+void *thread_function(void *);
 
-pthread_t thread_pool[THREAD_POOL_SIZE];
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 void serverSocket_SendReceive(int port)
 {
+    pthread_t thread_pool[THREAD_POOL_SIZE];
+
+    for (int i = 0; i < THREAD_POOL_SIZE; i++)
+    {
+        pthread_create(&thread_pool[i], NULL, thread_function, NULL);
+    }
+
     int entrySocket, connectionSocket; // socket file descriptors
     struct sockaddr_in serverAddr;
     struct sockaddr_storage serverStorage;
@@ -25,10 +32,8 @@ void serverSocket_SendReceive(int port)
     serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); //Sets IP to accept from any IP address
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero); //Set all bits of the padding field to 0
 
-    // errorCheck(bind(entrySocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)), "Error in bind"); //Bind the address struct to the socket
-    bind(entrySocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)); //Bind the address struct to the socket
+    errorCheck(bind(entrySocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)), "Error in bind"); //Bind the address struct to the socket
 
-    // Listen on the socket
     errorCheck(listen(entrySocket, BACKLOG), "Error listening");
 
     printf("SERVER: Listening on port %d\n", port);
@@ -36,83 +41,51 @@ void serverSocket_SendReceive(int port)
     while (1)
     {
         //Accept call creates a new socket for the incoming connection
-        addr_size = sizeof serverStorage;
+        // addr_size = sizeof(serverStorage);
         connectionSocket = accept(entrySocket, (struct sockaddr *)&serverStorage, &addr_size);
-        printf("Connected");
+        printf("SERVER: Connected to client\n");
 
-        // int *client = malloc(sizeof(int));
-        // *client = connectionSocket;
-
-        // // pthread_mutex_lock(&mutex);
-        // enqueue(client);
-        // // pthread_mutex_unlock(&mutex);
-
-        int *pclient = malloc(sizeof(int));
-        *pclient = connectionSocket;
+        int *client_socket = malloc(sizeof(int));
+        *client_socket = connectionSocket;
 
         //make sure only one thread messes with the queue at a time
         pthread_mutex_lock(&mutex);
-        enqueue(pclient);
+        insert(client_socket);
         pthread_cond_signal(&condition_thread);
         pthread_mutex_unlock(&mutex);
     }
 }
 
-// void * threadFunction(void * arg)
-// {
-//     while (1)
-//     {
-//         // pthread_mutex_lock(&mutex);
-//         int *client = dequeue();
-//         // pthread_mutex_unlock(&mutex);
 
-//         if (client != NULL)
-//         {
-//             handleConnection(client);
-//         }
-//     }
-// }
-
-void *thread_function(void *arg)
+void * thread_function(void *arg)
 {
-
     while (1)
     {
-        printf("EXECUTING1");
-        fflush(stdout);
-
-        int *pclient;
+        int *client_socket;
+        
         pthread_mutex_lock(&mutex);
-        if (pclient = dequeue() == NULL)
-        {
-            printf("EXECUTING2");
-
+        // if ((client_socket = removeData()) == NULL)
+        // {
             pthread_cond_wait(&condition_thread, &mutex);
-            pclient = dequeue();
-        }
+            client_socket = removeData();
+
+        // }
+
         pthread_mutex_unlock(&mutex);
 
-        // printf("%d", pclient);
-
-        if (pclient != NULL)
+        if (client_socket != NULL)
         {
-            printf("EXECUTING3");
-            fflush(stdout);
-
-            //we have a connection
-            handleConnection(pclient);
+            handleConnection(client_socket);
         }
     }
 }
 
-void *handleConnection(void *p_client_socket)
+void *handleConnection(void *client)
 {
-    // int client = *((int*)client_socket); // casts void pointer to int pointer
-    // free(client_socket);
-    int client_socket = *((int *)p_client_socket);
-    free(p_client_socket); //we really don't need this anymore.
+    int client_socket = *((int *)client);
 
     printf("SERVER: Connected to client.\n");
+    fflush(stdout);
 
     char message[256] = "What option would you like?";
     send(client_socket, message, sizeof(message) + 1, 0);
@@ -137,27 +110,18 @@ int errorCheck(int returned, const char *errMsg)
 
 int main()
 {
-    for (int i = 0; i < THREAD_POOL_SIZE; i++)
+    pthread_mutex_init(&mutex, NULL);
+
+    for (int i = 0; i < NUM_SERVERS; i++)
     {
-        pthread_create(&thread_pool[i], NULL, thread_function, NULL);
-    }
-
-        for (int i = 0; i < NUM_SERVERS; i++) // loop will run n times (n=5)
+        if (fork() == 0)
         {
-            if (fork() == 0)
-            {
-                serverSocket_SendReceive(PORT + i);
-
-                exit(0);
-            }
+            serverSocket_SendReceive(PORT + i);
+            exit(0);
+        }
         }
     for (int i = 0; i < NUM_SERVERS; i++)
         wait(NULL);
 
     return 0;
-}
-
-void printQueue()
-{
-
 }

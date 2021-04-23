@@ -13,16 +13,29 @@
 #include <sys/socket.h> // needed for socket connections
 #include <arpa/inet.h> // needed for socket connections
 #include <pthread.h> // threads
+#include <stdbool.h> 
+
 // #include <time.h> // time for random seed
 
 // parker's constants
-#define PORT 9082
+#define PORT 9085
 #define NUM_SERVERS 1
 #define BACKLOG 50
 #define THREAD_POOL_SIZE 2
 
-int *dequeue();
-void enqueue(int *client_socket);
+
+// int peek();
+
+// int isEmpty();
+
+// bool isFull();
+
+// int size();
+
+// void insert(int *data);
+
+// int removeData();
+
 
 
 #define CUSTNAME_LEN 64

@@ -3,7 +3,7 @@
 #==========================
 CC = gcc
 CFLAGS = -Wall
-SOBJS = parker_server.o queue.o
+SOBJS = parker_server.o
 COBJS = parker_client.o
 EXECS = s c
 HEADER = ../header.h
@@ -12,7 +12,7 @@ HEADER = ../header.h
 #==========================
 #		Client
 #==========================
-obj/parker_client.o: parker_client.c $(HEADER)  # step 2
+parker_client.o: parker_client.c $(HEADER)  # step 2
 	$(CC) $(CFLAGS) -c parker_client.c
 
 c: $(COBJS) # step 1
@@ -23,11 +23,11 @@ c: $(COBJS) # step 1
 #==========================
 #		Server
 #==========================
-obj/parker_server.o: parker_server.c $(HEADER)  # step 3
+parker_server.o: parker_server.c $(HEADER)  # step 3
 	$(CC) $(CFLAGS) -c parker_server.c
 
-obj/queue.o: queue.c # step 2
-	$(CC) $(CFLAGS) -c queue.c
+#queue.o: queue.c # step 2
+#	$(CC) $(CFLAGS) -c queue.c
 
 s: $(SOBJS) # step 1
 	$(CC) $(CFLAGS) -o s $(SOBJS) 
