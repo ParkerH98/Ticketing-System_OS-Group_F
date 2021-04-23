@@ -100,11 +100,39 @@ struct Customer printReceipt(struct Customer a , int choice)
 
 void reserveSeats( struct Customer a ) // files demo
 {
-    printf("\nThe following seat numbers have been reserved:\n");
-    for(int i = 1; i <= 30; i++)
+    FILE *fp1; 
+    fp1 = fopen("summary.txt", "w");
+
+    int x = a.id;
+    fprintf(fp1, "%d, e\n", x);
+
+    char str[20];
+    sprintf(str, "%d", x);
+
+
+    char filename[15];
+    strcat(str, "_r.txt");
+    printf("%s\n", str);
+    strcpy(filename, str);
+    printf("%s\n", filename);
+
+    FILE *fp2 = fopen(filename, "w");
+
+    //print the receipt information in the file
+    fprintf(fp2, "%s\n", a.name);
+    fprintf(fp2, "%d\n", a.govt_id);
+    fprintf(fp2, "%d\n", a.travel_date);
+    
+    fprintf(fp2, "%d\n", a.num_traveler);
+    for(int i=1; i <= 30; i++)
     {
-        if(a.seats[i]) printf("%d ", i);
+        fprintf(fp2, "%d", a.seats[i]);
     }
+    fprintf(fp2, "\n");
+
+
+    fclose(fp2);
+    fclose(fp1);
 }
 
 int availableFunction(struct Customer a) //files demo
@@ -157,6 +185,14 @@ struct Customer cancelTicket(ticket) //file demo
 int main()
 {
     // Connection from the manager
+
+    // create summary file
+    FILE *fp;
+    fp = fopen("summary.txt", "w");
+    fclose(fp);
+    // close the summary file pointer, to avoid future problems
+
+
 
     while(1)
     {
@@ -246,9 +282,9 @@ int main()
                 a.seats[ seatchoice[i] ] = 1;
             }
 
+            a = printReceipt( a, 1);        
             reserveSeats( a ); //connect to files
 
-            a = printReceipt( a, 1);        
         }
 
         if(choice == 2) // inquire about the tickets
