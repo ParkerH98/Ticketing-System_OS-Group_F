@@ -1,76 +1,133 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <ctype.h>
-#include <string.h>
 
-struct Customer
-{
-    int id;         // receipt id
-    char name[50];  // name of the customer
-    int dob;        // date of birth
-    char gender;    // gender of the customer
-    int govt_id;    //government id
-    int travel_date; //date they will travel. Format YYYYMMDD
-    int num_traveler; // number of traveler
-    int seats[31]; //selected seats in the train
+#define SIZE 5
+
+struct DataItem {
+   bool selected_seats[5];   
+   int custId;
 };
 
-struct Customer initializeCust(struct Customer a)
-{
-    a.id = 100;
-    a.dob = 20000101;
-    strcpy(a.name, "void");
-    a.gender = 'e';
-    a.govt_id = 1234;
-    a.travel_date = 20210413;
-    a.num_traveler = 1;
-    for(int i=0; i<31; i++)
-        a.seats[i] = 0;
-    return a;
+struct DataItem* hashArray[SIZE]; 
+struct DataItem* dummyItem;
+struct DataItem* item;
+bool available_seats[7] ={0,0,0,0,0,0,0};
+int vacant[7];
+
+int hashCode(int custId) {
+   return custId % SIZE;
 }
 
-void reserveSeats( struct Customer a ) // files demo
-{
-    printf("\nThe following seat numbers have been reserved:\n");
-    for(int i = 1; i <= 30; i++)
-    {
-        if(a.seats[i]) printf("%d ", i);
+int getNumberOfSeats(){
+    int count = 0;
+    for(int i=0; i< SIZE; i++){
+        if(available_seats[i]==0){
+            count++;
+        }
     }
+    return count;
 }
 
-int availableFunction(struct Customer a) //files demo
-{
-    return 10;
+struct DataItem *inquireTicket(int custId) {
+   //get the hash 
+   int hashIndex = hashCode(custId);  
+	
+   //move in array until an empty 
+   while(hashArray[hashIndex] != NULL) {
+	
+      if(hashArray[hashIndex]->custId == custId){
+         printf("Customer reserved seat: %u\n",hashArray[hashIndex]);
+         return hashArray[hashIndex]; 
+      }
+      else{
+          printf("Customer %d have not reserve any seat\n",custId);
+          return NULL;
+      }
+			
+      //go to next cell
+      ++hashIndex;
+		
+      //wrap around the table
+      hashIndex %= SIZE;
+   }        
+	//returns the index customer and it's array
+   return hashArray[hashIndex]->selected_seats;        
 }
 
-int * availableFunction2(struct Customer a) //files demo
-{
-    static int  r[] = {10, 3, 6, 8, 9, 10, 16, 17, 18, 22, 23} ;
-    int i;
+void reserveSeat(int custId,bool selected_seats[]) {
+    int seat_size = 5;
+    for(int i=0; i< seat_size;i++){
+        if(selected_seats[i]==0){
+            vacant[i] = i+1;
+        }
+    }
 
-    return r;
+
+   struct DataItem *item = (struct DataItem*) malloc(sizeof(struct DataItem));
+   item->selected_seats[SIZE] = selected_seats[SIZE];  
+   item->custId = custId;
+
+   //get the hash 
+   int hashIndex = hashCode(custId);
+
+   //move in array until an empty or deleted cell
+   while(hashArray[hashIndex] != NULL && hashArray[hashIndex]->custId != -1) {
+      //go to next cell
+      ++hashIndex;
+		
+      //wrap around the table
+      hashIndex %= SIZE;
+   }
+	
+   hashArray[hashIndex] = item;
 }
 
-struct Customer inquireTicket(int ticket) //file demo
-{
-    struct Customer a;
-    a = initializeCust(a);
-    a.id = ticket;
-    strcpy(a.name, "Harry Potter");
-    // a.name = "Harry Potter";
-    a.dob = 19940920;
-    a.gender = 'm';
-    a.govt_id = 405762;
-    a.travel_date = 20210414;
-    a.num_traveler = 5;
-    
-    a.seats[3] = 1;
-    a.seats[8] = 1;
-    a.seats[10] = 1;
-    a.seats[18] = 1;
-    a.seats[23] = 1;
+//This is optional.. we don't need it for our main code
+void display() {
+   int i = 0;
+   int count =0;
+	
+   for(i = 0; i<SIZE; i++) {
+	
+      if(hashArray[i] != NULL)
+         printf(" customer %d got seat %u\n",hashArray[i]->custId,hashArray[i]->selected_seats);
+      else
+         printf(" ~~ \n");
+   }
+	
+   printf("====================================================\n");
+}
 
-    return a;
+int main() {
+   //dummyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
+   //dummyItem->selected_seats[SIZE] = -1;  
+   //dummyItem->custId = -1; 
 
+    bool  seats[5]= {1,0,0,1,1};
+    bool  seats2[5]= {0,1,0,0,0};
+    bool seat3[5] = {0,0,1,0,0};
+
+   reserveSeat(1, seats);
+   reserveSeat(2, seats2);
+   printf("The number of available seats is %d\n\n",getNumberOfSeats());
+   reserveSeat(3, seat3);
+   printf("The number of available seats is %d\n\n",getNumberOfSeats());
+   display();
+
+   inquireTicket(37);
+   item = inquireTicket(1);
+   bool *array = item->selected_seats;
+
+    int len = sizeof(array) / sizeof(*array);
+    printf("length of the seats is %d\n ",len);
+    for (int i=0; i< len; i++){
+        if (array[i]==1)
+        {
+            printf("The reserved seats are %u\n",array[i]);
+        }
+        
+        
+    }
 }
