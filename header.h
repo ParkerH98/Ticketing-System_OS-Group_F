@@ -14,6 +14,7 @@
 #include <arpa/inet.h> // needed for socket connections
 #include <pthread.h> // threads
 #include <time.h> // time for random seed
+#include <semaphore.h> // semaphores
 
 // SERVER CONSTANTS
 #define PORT 9085
