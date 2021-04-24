@@ -2,7 +2,6 @@
 
 sem_t wrt;
 pthread_mutex_t mutex;
-int cnt = 1;
 int read_count = 0;
 
 void writer()
@@ -23,7 +22,7 @@ void reader()
     // Reader acquire the lock before modifying read_count
     pthread_mutex_lock(&mutex);
     read_count++;
-    
+
     // If this is the first reader, then it will block the writer
     if (read_count == 1)
     {
