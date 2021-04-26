@@ -29,6 +29,8 @@ void clientSocket_SendReceive(int port)
         exit(1);
     }
 
+    printf("CLIENT: Connected at port %d\n", port);
+
     char received[256];
     read(clientSocket, received, sizeof(received) + 1);
     printf("%s\n", received);

@@ -1,14 +1,25 @@
-
-
-
-ClIENT
-
-    Create Menu
-        
-
-
-
-
-
+TODO:
 
 SERVER
+
+    - Server can only serve one customer at a time
+    - create function to make reservation
+    - create function to make inquiry
+    - create function to modify reservation
+    - create function to cancel reservation
+    - implementation of summary file for receipts
+    - manage synchronization between servers
+    - customers waiting if a thread isn't available
+    - handling priority when customers are making reservation
+    - make sure process with lower priority will not starve
+
+
+DONE:
+    - create TCP connection for client to connect to server --> Parker
+    - create TCP connection for clients to connect  --> Parker
+    - Server handles simultaneous connections  --> Parker
+    - Server is multithreaded  --> Parker
+    - Create N number of servers --> Parker
+    - create threadpool for threads --> Parker
+    - Server sends menu to client --> Parker
+    - manage synchronization between threads --> Parker
