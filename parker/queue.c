@@ -4,18 +4,18 @@
 #define QUEUE_SIZE 6
 
 int intArray[QUEUE_SIZE];
-int front = 0;
-int rear = -1;
-int itemCount = 0;
+int head = 0;
+int tail = -1;
+int count = 0;
 
 int peek()
 {
-    return intArray[front];
+    return intArray[head];
 }
 
 int isEmpty()
 {
-    if (itemCount == 0)
+    if (count == 0)
     {
         return 1;
     }
@@ -25,7 +25,7 @@ int isEmpty()
 
 int isFull()
 {
-    if (itemCount == QUEUE_SIZE)
+    if (count == QUEUE_SIZE)
     {
         return 1;
     }
@@ -34,40 +34,40 @@ int isFull()
 
 int size()
 {
-    return itemCount;
+    return count;
 }
 
 void insert(int *data)
 {
-    if (itemCount != QUEUE_SIZE)
+    if (count != QUEUE_SIZE)
     {
-        if (rear == QUEUE_SIZE - 1)
+        if (tail == QUEUE_SIZE - 1)
         {
-            rear = -1;
+            tail = -1;
         }
 
-        intArray[++rear] = *data;
-        itemCount++;
+        intArray[++tail] = *data;
+        count++;
     }
-    printf("QUEUE: Count --> %d\n", itemCount);
+    printf("QUEUE: Count --> %d\n", count);
 }
 
 int *removeData()
 {
-    if (itemCount == 0)
+    if (count == 0)
     {
         return NULL;
     }
 
     int *data = malloc(sizeof(int));
-    data = &intArray[front++];
+    data = &intArray[head++];
 
-    if (front == QUEUE_SIZE)
+    if (head == QUEUE_SIZE)
     {
-        front = 0;
+        head = 0;
     }
 
-    itemCount--;
+    count--;
     return data;
 }
 
