@@ -100,6 +100,7 @@ struct Customer printReceipt(struct Customer a, int choice)
 
 void reserveSeats(struct Customer a) // files demo
 {
+
     FILE *fp1;
     fp1 = fopen("summary.txt", "w");
 

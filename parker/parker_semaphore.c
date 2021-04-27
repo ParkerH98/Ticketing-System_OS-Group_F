@@ -13,6 +13,7 @@ void writer()
     // write operation here
 
 
+
     sem_post(&wrt);
 }
 

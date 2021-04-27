@@ -13,7 +13,6 @@ SERVER
     - handling priority when customers are making reservation
     - make sure process with lower priority will not starve
 
-
 DONE:
     - create TCP connection for client to connect to server --> Parker
     - create TCP connection for clients to connect  --> Parker
