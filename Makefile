@@ -31,7 +31,7 @@ driver_server.o: driver_server.c $(HEADER)  # step 3
 
 s: $(SOBJS) # step 1
 	$(CC) $(CFLAGS) -o s $(SOBJS) 
-	clear
+	
 
 
 #==========================

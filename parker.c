@@ -9,6 +9,9 @@ int errorCheck(int returned, const char *errMsg);
 void *waitForWork(void *);
 int *removeData();
 void insert(int *data);
+void cancellation(int *ticket);
+struct Customer *reserveInformationFromUser();
+void reserveSeats(struct Customer *customer);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
@@ -97,32 +100,35 @@ void *handleConnection(void *client)
     printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
     fflush(stdout);
 
-
-    if (selection == 1)
+    if (atoi(selection) == 1)
     {
-        struct Customer customer;
+        struct Customer *customer = NULL;
+        // struct Customer *customer = &query;
 
-        customer = recv(client_socket, customer, sizeof(struct Customer) + 1, 0);
+        // struct Query query;
+        // struct Query *queryPtr = &query;
+
+        recv(client_socket, customer, sizeof(struct Customer) + 1, 0);
 
         reserveSeats(customer);
     }
-    else if (selection == 2)
+    else if (atoi(selection) == 2)
     {
         // inquiry();
     }
-    else if (selection == 3)
+    else if (atoi(selection) == 3)
     {
         // modifyReservation();
     }
-    else if (selection == 4)
+    else if (atoi(selection) == 4)
     {
-        int ticket_num;
+        int *ticket_num = NULL;
 
-        ticket_num = recv(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
+        recv(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
 
         cancellation(ticket_num);
     }
-    else if (selection == 5)
+    else if (atoi(selection) == 5)
     {
         exit(0);
     }
@@ -186,39 +192,38 @@ void clientSocket_SendReceive(int port)
     printf("%s\n", received);
 
     char selection[2];
-    // scanf("%s", selection);
-    // int num = (rand() % (11 - 0 + 1)) + 0;
-    // sprintf(selection, "%d", num);
-    strcpy(selection, "1");
+    scanf("%s", selection);
+    int num = (rand() % (11 - 0 + 1)) + 0;
+    sprintf(selection, "%d", num);
+    // strcpy(selection, "1");
     send(clientSocket, selection, sizeof(selection) + 1, 0);
 
-    if (selection == 1){
+    if (atoi(selection) == 1)
+    {
 
-
-
-        struct Customer customer;
+        struct Customer *customer = NULL;
         customer = reserveInformationFromUser(customer);
 
         send(clientSocket, customer, sizeof(struct Customer) + 1, 0);
     }
 
-    else if (selection == 2)
+    else if (atoi(selection) == 2)
     {
         // inquiry();
     }
-    else if (selection == 3)
+    else if (atoi(selection) == 3)
     {
         // modifyReservation();
     }
-    else if (selection == 4)
+    else if (atoi(selection) == 4)
     {
-        int ticket_num;
+        int *ticket_num = NULL;
         printf("What is your ticket number?\n");
-        scanf("%d", &ticket_num);
+        scanf("%d", ticket_num);
 
         send(clientSocket, ticket_num, sizeof(ticket_num) + 1, 0);
     }
-    else if (selection == 5)
+    else if (atoi(selection) == 5)
     {
         exit(0);
     }
@@ -230,7 +235,7 @@ void clientSocket_SendReceive(int port)
 
 int printRandoms(int lower, int upper)
 {
-    int i;
+    // int i;
     // for (i = 0; i < count; i++)
     // {
     srand(time(NULL));
@@ -250,16 +255,16 @@ int printRandoms(int lower, int upper)
 
 // sem_t wrt;
 // pthread_mutex_t mutex;
-read_count = 0;
+// int read_count = 0;
 
 void writer()
 {
-    sem_wait(&wrt);
+    sem_wait(wrt);
 
     // CRITICAL SECTION
     // write operation here
 
-    sem_post(&wrt);
+    sem_post(wrt);
 }
 
 void reader()
@@ -271,7 +276,7 @@ void reader()
     // If this is the first reader, then it will block the writer
     if (read_count == 1)
     {
-        sem_wait(&wrt);
+        sem_wait(wrt);
     }
     pthread_mutex_unlock(&mutex);
 
@@ -284,7 +289,7 @@ void reader()
     // if this is the last reader, it will signal the writer
     if (read_count == 0)
     {
-        sem_post(&wrt);
+        sem_post(wrt);
     }
     pthread_mutex_unlock(&mutex);
 }
@@ -292,10 +297,10 @@ void reader()
 // int main()
 // {
 //     pthread_mutex_init(&mutex, NULL);
-//     sem_init(&wrt, 0, 1);
+//     sem_init(wrt, 0, 1);
 
 //     pthread_mutex_destroy(&mutex);
-//     sem_destroy(&wrt);
+//     sem_destroy(wrt);
 
 //     return 0;
 // }

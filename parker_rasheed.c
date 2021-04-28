@@ -1,3 +1,4 @@
+#include "header.h"
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -8,8 +9,9 @@ int receipt_num = 1; //please call this as global variable
 
 
 
-struct Customer initializeCust(struct Customer a)
+struct Customer initializeCust()
 {
+    struct Customer a;
     a.id = 100;
     a.dob = 20000101;
     strcpy(a.name, "void");
@@ -108,7 +110,7 @@ void reserveSeats(struct Customer *customer) // files demo
     struct Customer a;
     a = *customer;
     // gives lock to writer
-    sem_wait(&wrt);
+    sem_wait(wrt);
 
     // BEGINNING CRITICAL SECTION
 
@@ -150,7 +152,7 @@ void reserveSeats(struct Customer *customer) // files demo
     fclose(fp1);
 
     // takes lock from writer
-    sem_post(&wrt);
+    sem_post(wrt);
 }
 
 int availableFunction(struct Customer a) //files demo
@@ -169,7 +171,7 @@ int *availableFunction2(struct Customer a) //files demo
 struct Customer inquireTicket(int ticket) //file demo
 {
     struct Customer a;
-    a = initializeCust(a);
+    a = initializeCust();
     a.id = ticket;
     strcpy(a.name, "Harry Potter");
     // a.name = "Harry Potter";
@@ -188,16 +190,16 @@ struct Customer inquireTicket(int ticket) //file demo
     return a;
 }
 
-struct Customer modifyTicket(struct Customer a) // file demo
-{
-    return a;
-};
+// struct Customer modifyTicket(struct Customer a) // file demo
+// {
+//     return a;
+// };
 
-struct Customer cancelTicket(ticket) //file demo
-{
-    struct Customer a;
-    return a;
-};
+// struct Customer cancelTicket(ticket) //file demo
+// {
+//     struct Customer a;
+//     return a;
+// };
 
 void cancellation(int *ticket_ptr)
 {
@@ -230,32 +232,35 @@ void cancellation(int *ticket_ptr)
     }
 }
 
-struct Customer* reserveInformationFromUser( struct Customer *customer) //needs work
+struct Customer* reserveInformationFromUser() //needs work
 {
-    struct Customer a;
-    a = *customer;
+
+    // MyObject *my1 = malloc(sizeof(MyObject));
+
+    struct Customer *a = malloc(sizeof(struct Customer));
+
 
     printf("Please provide name: ");
     char Name[50];
     //strcpy(Name, "Harry Potter");
     scanf(" %s", Name);
-    strcpy(a.name, Name);
+    strcpy(a->name , Name);
     printf("Date of Birth(YYYYMMDD): ");
-    scanf("%d", &a.dob);
+    scanf("%d", &a->dob);
     printf("Your gender: ");
-    scanf(" %c", &a.gender);
+    scanf(" %c", &a->gender);
     printf("Government ID: ");
-    scanf("%d", &a.govt_id);
+    scanf("%d", &a->govt_id);
     printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
-    scanf("%d", &a.travel_date);
+    scanf("%d", &a->travel_date);
     printf("Number of travelers: ");
-    scanf("%d", &a.num_traveler);
+    scanf("%d", &a->num_traveler);
  
-    for(int i = 0; i<a.num_traveler; i++)
+    for(int i = 0; i<a->num_traveler; i++)
     {
         int temp;
         scanf("%d", &temp);
-        a.seats[temp-1] = 1;
+        a->seats[temp-1] = 1;
     }
  
  
