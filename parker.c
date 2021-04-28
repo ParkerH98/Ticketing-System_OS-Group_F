@@ -32,9 +32,9 @@ void serverSocket_SendReceive(int port)
     errorCheck(entrySocket = socket(PF_INET, SOCK_STREAM, 0), "Error creating socket"); // Create the socket
 
     // Configure settings of the server address struct
-    serverAddr.sin_family = AF_INET;                               //Address family = Internet
-    serverAddr.sin_port = htons(port);                             //Set port number, using htons function to use proper byte order
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);                //Sets IP to accept from any IP address
+    serverAddr.sin_family = AF_INET; //Address family = Internet
+    serverAddr.sin_port = htons(port); //Set port number, using htons function to use proper byte order
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); //Sets IP to accept from any IP address
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero); //Set all bits of the padding field to 0
 
     errorCheck(bind(entrySocket, (struct sockaddr *)&serverAddr, sizeof(serverAddr)), "Error in bind"); //Bind the address struct to the socket
@@ -97,11 +97,14 @@ void *handleConnection(void *client)
     printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
     fflush(stdout);
 
-    initializeCust();
 
     if (selection == 1)
     {
-        reserveSeats();
+        struct Customer customer;
+
+        customer = recv(client_socket, customer, sizeof(struct Customer) + 1, 0);
+
+        reserveSeats(customer);
     }
     else if (selection == 2)
     {
@@ -113,7 +116,11 @@ void *handleConnection(void *client)
     }
     else if (selection == 4)
     {
-        // cancelReservation();
+        int ticket_num;
+
+        ticket_num = recv(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
+
+        cancellation(ticket_num);
     }
     else if (selection == 5)
     {
@@ -184,6 +191,38 @@ void clientSocket_SendReceive(int port)
     // sprintf(selection, "%d", num);
     strcpy(selection, "1");
     send(clientSocket, selection, sizeof(selection) + 1, 0);
+
+    if (selection == 1){
+
+
+
+        struct Customer customer;
+        customer = reserveInformationFromUser(customer);
+
+        send(clientSocket, customer, sizeof(struct Customer) + 1, 0);
+    }
+
+    else if (selection == 2)
+    {
+        // inquiry();
+    }
+    else if (selection == 3)
+    {
+        // modifyReservation();
+    }
+    else if (selection == 4)
+    {
+        int ticket_num;
+        printf("What is your ticket number?\n");
+        scanf("%d", &ticket_num);
+
+        send(clientSocket, ticket_num, sizeof(ticket_num) + 1, 0);
+    }
+    else if (selection == 5)
+    {
+        exit(0);
+    }
+
 
     close(clientSocket);
 }

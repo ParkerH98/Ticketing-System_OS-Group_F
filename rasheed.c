@@ -98,13 +98,21 @@ struct Customer printReceipt(struct Customer a, int choice)
     return a;
 }
 
+
 void reserveSeats(struct Customer a) // files demo
 {
+    // gives lock to writer
+    sem_wait(&wrt);
+
+
+    // CRITICAL SECTION
+
 
     FILE *fp1;
     fp1 = fopen("summary.txt", "w");
 
     int x = a.id;
+
     fprintf(fp1, "%d, e\n", x);
 
     char str[20];
@@ -119,6 +127,9 @@ void reserveSeats(struct Customer a) // files demo
     FILE *fp2 = fopen(filename, "w");
 
     //print the receipt information in the file
+
+    // 
+
     fprintf(fp2, "%s\n", a.name);
     fprintf(fp2, "%d\n", a.govt_id);
     fprintf(fp2, "%d\n", a.travel_date);
@@ -130,8 +141,12 @@ void reserveSeats(struct Customer a) // files demo
     }
     fprintf(fp2, "\n");
 
+
     fclose(fp2);
     fclose(fp1);
+
+    // takes lock from writer
+    sem_post(&wrt);
 }
 
 int availableFunction(struct Customer a) //files demo
@@ -207,6 +222,35 @@ void cancellation(int ticket)
             printf("The ticket doesn't exist.\n");
         }
     }
+}
+
+struct Customer reserveInformationFromUser( struct Customer a) //needs work
+{
+    printf("Please provide name: ");
+    char Name[50];
+    //strcpy(Name, "Harry Potter");
+    scanf(" %s", Name);
+    strcpy(a.name, Name);
+    printf("Date of Birth(YYYYMMDD): ");
+    scanf("%d", &a.dob);
+    printf("Your gender: ");
+    scanf(" %c", &a.gender);
+    printf("Government ID: ");
+    scanf("%d", &a.govt_id);
+    printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
+    scanf("%d", &a.travel_date);
+    printf("Number of travelers: ");
+    scanf("%d", &a.num_traveler);
+ 
+    for(int i = 0; i<a.num_traveler; i++)
+    {
+        int temp;
+        scanf("%d", &temp);
+        a.seats[temp-1] = 1;
+    }
+ 
+ 
+    return a;
 }
 
 int main()
