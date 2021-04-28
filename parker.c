@@ -12,6 +12,7 @@ void insert(int *data);
 void cancellation(int *ticket);
 struct Customer *reserveInformationFromUser();
 void reserveSeats(struct Customer *customer);
+void clientHandleSelection(int selection, void *client);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
@@ -184,6 +185,8 @@ void clientSocket_SendReceive(int port)
         perror("[-]Error in socket");
         exit(1);
     }
+    int *client_socket_ptr = malloc(sizeof(int));
+    *client_socket_ptr = clientSocket;
 
     printf("CLIENT: Connected at port %d\n", port);
 
@@ -193,43 +196,48 @@ void clientSocket_SendReceive(int port)
 
     char selection[2];
     scanf("%s", selection);
-    int num = (rand() % (11 - 0 + 1)) + 0;
-    sprintf(selection, "%d", num);
+    // int num = (rand() % (11 - 0 + 1)) + 0;
+    // sprintf(selection, "%d", num);
     // strcpy(selection, "1");
     send(clientSocket, selection, sizeof(selection) + 1, 0);
 
-    if (atoi(selection) == 1)
+    clientHandleSelection(atoi(selection), client_socket_ptr);
+
+    close(clientSocket);
+}
+
+void clientHandleSelection(int selection, void *client)
+{
+    int client_socket = *((int *)client);
+    if (selection == 1)
     {
 
         struct Customer *customer = NULL;
         customer = reserveInformationFromUser(customer);
 
-        send(clientSocket, customer, sizeof(struct Customer) + 1, 0);
+        send(client_socket, customer, sizeof(struct Customer) + 1, 0);
     }
 
-    else if (atoi(selection) == 2)
+    else if (selection == 2)
     {
         // inquiry();
     }
-    else if (atoi(selection) == 3)
+    else if (selection == 3)
     {
         // modifyReservation();
     }
-    else if (atoi(selection) == 4)
+    else if (selection == 4)
     {
         int *ticket_num = NULL;
         printf("What is your ticket number?\n");
         scanf("%d", ticket_num);
 
-        send(clientSocket, ticket_num, sizeof(ticket_num) + 1, 0);
+        send(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
     }
-    else if (atoi(selection) == 5)
+    else if (selection == 5)
     {
         exit(0);
     }
-
-
-    close(clientSocket);
 }
 
 
