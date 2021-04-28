@@ -180,6 +180,35 @@ struct Customer cancelTicket(ticket) //file demo
     return a;
 };
 
+void cancellation(int ticket)
+{
+    if(ticket < 2000)
+    {
+        char filename[11];
+        char temp[4];
+        
+        sprintf(temp, "%d", ticket);
+        strcpy(filename, temp);
+        strcat(filename, "_r.txt");
+
+        //printf("%s\n", filename);
+
+        if( fopen(filename, "r") )
+        {
+            printf("Ticket FOUND %d\n", ticket);
+            printf("Are you sure you want to cancel the reservation? Y/N\n");
+            char ans;
+            scanf(" %c", &ans);
+            printf("Reservation for ticket %d is cancelled.\n", ticket);
+            remove(filename);
+        }
+        else
+        {
+            printf("The ticket doesn't exist.\n");
+        }
+    }
+}
+
 int main()
 {
     // Connection from the manager
