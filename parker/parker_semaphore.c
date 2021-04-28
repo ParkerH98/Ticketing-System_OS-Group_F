@@ -1,8 +1,8 @@
 #include "../header.h"
 
-sem_t wrt;
-pthread_mutex_t mutex;
-int read_count = 0;
+// sem_t wrt;
+// pthread_mutex_t mutex;
+// read_count = 0;
 
 void writer()
 {

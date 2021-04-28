@@ -38,4 +38,8 @@ struct Customer
     int seats[NUM_SEATS]; //selected seats in the train
 };
 
+extern sem_t wrt;
+extern pthread_mutex_t mutex;
+extern int read_count = 0;
+
 #endif

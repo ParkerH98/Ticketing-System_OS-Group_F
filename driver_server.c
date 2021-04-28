@@ -1,4 +1,5 @@
 #include "parker.c"
+#include "rasheed.c"
 
 // Usage Instructions:
 // make s && ./s

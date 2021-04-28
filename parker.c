@@ -13,6 +13,7 @@ void insert(int *data);
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
+
 void serverSocket_SendReceive(int port)
 {
     pthread_t thread_pool[THREAD_NUMBER];
@@ -60,6 +61,7 @@ void serverSocket_SendReceive(int port)
     }
 }
 
+
 void *waitForWork(void *arg)
 {
     while (1)
@@ -80,6 +82,7 @@ void *waitForWork(void *arg)
     }
 }
 
+
 void *handleConnection(void *client)
 {
     int client_socket = *((int *)client);
@@ -94,9 +97,11 @@ void *handleConnection(void *client)
     printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
     fflush(stdout);
 
+    initializeCust();
+
     if (selection == 1)
     {
-        // makeReservation();
+        reserveSeats();
     }
     else if (selection == 2)
     {
@@ -118,6 +123,7 @@ void *handleConnection(void *client)
     close(client_socket);
     return NULL;
 }
+
 
 int errorCheck(int returned, const char *errMsg)
 {
@@ -182,6 +188,7 @@ void clientSocket_SendReceive(int port)
     close(clientSocket);
 }
 
+
 int printRandoms(int lower, int upper)
 {
     int i;
@@ -202,9 +209,9 @@ int printRandoms(int lower, int upper)
 //   parker_semaphore.c
 //========================
 
-sem_t wrt;
-pthread_mutex_t mutex;
-int read_count = 0;
+// sem_t wrt;
+// pthread_mutex_t mutex;
+read_count = 0;
 
 void writer()
 {
@@ -268,34 +275,8 @@ int head = 0;
 int tail = -1;
 int count = 0;
 
-int peek()
-{
-    return intArray[head];
-}
 
-int isEmpty()
-{
-    if (count == 0)
-    {
-        return 1;
-    }
 
-    return 0;
-}
-
-int isFull()
-{
-    if (count == QUEUE_SIZE)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-int size()
-{
-    return count;
-}
 
 void insert(int *data)
 {
