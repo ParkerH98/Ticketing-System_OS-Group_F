@@ -234,36 +234,39 @@ void cancellation(int *ticket_ptr)
 
 struct Customer* reserveInformationFromUser() //needs work
 {
-
-    // MyObject *my1 = malloc(sizeof(MyObject));
-
     struct Customer *a = malloc(sizeof(struct Customer));
 
+    // printf("Please provide name: ");
+    // char Name[50];
+    // scanf(" %s", Name);
+    // strcpy(a->name , Name);
+    // printf("Date of Birth(YYYYMMDD): ");
+    // scanf("%d", &a->dob);
+    // printf("Your gender: ");
+    // scanf(" %c", &a->gender);
+    // printf("Government ID: ");
+    // scanf("%d", &a->govt_id);
+    // printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
+    // scanf("%d", &a->travel_date);
+    // printf("Number of travelers: ");
+    // scanf("%d", &a->num_traveler);
+   
+    // automated for testing
+    strcpy(a->name, "Parker Hague");
+    a->dob = 19980418;
+    a->gender = 'M';
+    a->govt_id = 45259;
+    a->travel_date = 20210419;
+    a->num_traveler = 3;
 
-    printf("Please provide name: ");
-    char Name[50];
-    //strcpy(Name, "Harry Potter");
-    scanf(" %s", Name);
-    strcpy(a->name , Name);
-    printf("Date of Birth(YYYYMMDD): ");
-    scanf("%d", &a->dob);
-    printf("Your gender: ");
-    scanf(" %c", &a->gender);
-    printf("Government ID: ");
-    scanf("%d", &a->govt_id);
-    printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
-    scanf("%d", &a->travel_date);
-    printf("Number of travelers: ");
-    scanf("%d", &a->num_traveler);
- 
-    for(int i = 0; i<a->num_traveler; i++)
+    printf("Enter seats\n");
+    for (int i = 0; i < a->num_traveler; i++)
     {
         int temp;
         scanf("%d", &temp);
-        a->seats[temp-1] = 1;
+        a->seats[temp - 1] = 1;
     }
- 
- 
+
     return a;
 }
 

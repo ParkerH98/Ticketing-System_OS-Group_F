@@ -103,12 +103,23 @@ void *handleConnection(void *client)
     if (atoi(selection) == 1)
     {
         struct Customer *customer = NULL;
-        // struct Customer *customer = &query;
 
-        // struct Query query;
-        // struct Query *queryPtr = &query;
+        sleep(5);
 
         recv(client_socket, customer, sizeof(struct Customer) + 1, 0);
+
+        printf("Customer information received:\n");
+        printf("%d\n", customer->id);
+        printf("%s\n", customer->name);
+        printf("%c\n", customer->dob);
+        printf("%d\n", customer->gender);
+        printf("%d\n", customer->govt_id);
+        printf("%d\n", customer->travel_date);
+        printf("%d\n", customer->num_traveler);
+        for (int i = 0; i < NUM_SEATS; i++){
+            printf("%d ", customer->seats[i]);
+        }
+        printf("\n");
 
         reserveSeats(customer);
     }

@@ -60,11 +60,14 @@ void clientHandleSelection(int selection, void *client)
     int client_socket = *((int *)client);
     if (selection == 1)
     {
+        printf("EXECUTED1\n");
 
         struct Customer *customer = NULL;
-        customer = reserveInformationFromUser(customer);
+        customer = reserveInformationFromUser();
+        printf("EXECUTED2\n");
 
         send(client_socket, customer, sizeof(struct Customer) + 1, 0);
+        printf("RESERVATION SENT\n");
     }
 
     else if (selection == 2)
