@@ -10,7 +10,7 @@ void *waitForWork(void *);
 int *removeData();
 void insert(int *data);
 void cancellation(int *ticket);
-struct Customer *reserveInformationFromUser();
+struct Customer reserveInformationFromUser();
 void reserveSeats(struct Customer *customer);
 
 pthread_mutex_t mutex;
@@ -92,36 +92,36 @@ void *handleConnection(void *client)
 
     printf("SERVER: Connected to client.\n");
 
-    char message[256] = "\n========================\n    Reservation Menu\n========================\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
-    send(client_socket, message, sizeof(message) + 1, 0);
+    char menu[256] = "\n========================\n    Reservation Menu\n========================\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
+    send(client_socket, menu, sizeof(menu), 0);
 
     char selection[2];
-    recv(client_socket, selection, sizeof(selection) + 1, 0); //Read the message from the server into the buffer
+    recv(client_socket, selection, sizeof(selection), 0);
     printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
     fflush(stdout);
 
     if (atoi(selection) == 1)
     {
-        struct Customer *customer = NULL;
+        struct Customer customer;
+        struct Customer *customer_ptr = &customer;
 
-        sleep(5);
-
-        recv(client_socket, customer, sizeof(struct Customer) + 1, 0);
+        recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
         printf("Customer information received:\n");
-        printf("%d\n", customer->id);
-        printf("%s\n", customer->name);
-        printf("%c\n", customer->dob);
-        printf("%d\n", customer->gender);
-        printf("%d\n", customer->govt_id);
-        printf("%d\n", customer->travel_date);
-        printf("%d\n", customer->num_traveler);
+        printf("Customer ID: %d\n", customer.id);
+        printf("Customer Name: %s\n", customer_ptr->name);
+        printf("Customer DOB: %c\n", customer.dob);
+        printf("Customer Gender: %d\n", customer.gender);
+        printf("Customer GOVTID: %d\n", customer.govt_id);
+        printf("Customer Travel Date: %d\n", customer.travel_date);
+        printf("Customer Num Travelers: %d\n", customer.num_traveler);
+        printf("Customer Seats: \n");
         for (int i = 0; i < NUM_SEATS; i++){
-            printf("%d ", customer->seats[i]);
+            printf("%d ", customer.seats[i]);
         }
         printf("\n");
 
-        reserveSeats(customer);
+        reserveSeats(customer_ptr);
     }
     else if (atoi(selection) == 2)
     {
@@ -135,7 +135,7 @@ void *handleConnection(void *client)
     {
         int *ticket_num = NULL;
 
-        recv(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
+        recv(client_socket, ticket_num, sizeof(ticket_num), 0);
 
         cancellation(ticket_num);
     }
@@ -161,12 +161,6 @@ int errorCheck(int returned, const char *errMsg)
 }
 
 
-
-
-
-
-
-
 int printRandoms(int lower, int upper)
 {
     // int i;
@@ -179,7 +173,6 @@ int printRandoms(int lower, int upper)
 
     return num;
 }
-
 
 
 
@@ -240,11 +233,6 @@ void reader()
 // }
 
 
-
-
-//========================
-//   parker_semaphore.c
-//========================
 
 #define QUEUE_SIZE 6
 

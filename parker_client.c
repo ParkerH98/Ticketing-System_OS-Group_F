@@ -1,7 +1,7 @@
 #include "header.h"
 
 void clientHandleSelection(int selection, void *client);
-struct Customer *reserveInformationFromUser();
+struct Customer reserveInformationFromUser();
 
 //========================
 //   parker_client.c
@@ -39,34 +39,51 @@ void clientSocket_SendReceive(int port)
 
     printf("CLIENT: Connected at port %d\n", port);
 
-    char received[256];
-    read(clientSocket, received, sizeof(received) + 1);
-    printf("%s\n", received);
+    char menu[256];
+    read(clientSocket, menu, sizeof(menu));
+    printf("%s\n", menu);
 
     char selection[2];
     scanf("%s", selection);
-    // int num = (rand() % (11 - 0 + 1)) + 0;
+
+    // for automation
     // sprintf(selection, "%d", num);
     // strcpy(selection, "1");
-    send(clientSocket, selection, sizeof(selection) + 1, 0);
+
+    send(clientSocket, selection, sizeof(selection), 0);
 
     clientHandleSelection(atoi(selection), client_socket_ptr);
 
     close(clientSocket);
 }
 
+
 void clientHandleSelection(int selection, void *client)
 {
     int client_socket = *((int *)client);
     if (selection == 1)
     {
-        printf("EXECUTED1\n");
+        struct Customer customer;
+        struct Customer *customer_ptr = &customer;
 
-        struct Customer *customer = NULL;
         customer = reserveInformationFromUser();
-        printf("EXECUTED2\n");
 
-        send(client_socket, customer, sizeof(struct Customer) + 1, 0);
+        printf("Customer information menu:\n");
+        printf("Customer ID: %d\n", customer.id);
+        printf("Customer Name: %s\n", customer_ptr->name);
+        printf("Customer DOB: %d\n", customer.dob);
+        printf("Customer Gender: %c\n", customer.gender);
+        printf("Customer GOVTID: %d\n", customer.govt_id);
+        printf("Customer Travel Date: %d\n", customer.travel_date);
+        printf("Customer Num Travelers: %d\n", customer.num_traveler);
+        printf("Customer Seats: \n");
+        for (int i = 0; i < NUM_SEATS; i++)
+        {
+            printf("%d ", customer.seats[i]);
+        }
+        printf("\n");
+
+        send(client_socket, customer_ptr, sizeof(struct Customer), 0);
         printf("RESERVATION SENT\n");
     }
 
@@ -84,7 +101,7 @@ void clientHandleSelection(int selection, void *client)
         printf("What is your ticket number?\n");
         scanf("%d", ticket_num);
 
-        send(client_socket, ticket_num, sizeof(ticket_num) + 1, 0);
+        send(client_socket, ticket_num, sizeof(ticket_num), 0);
     }
     else if (selection == 5)
     {

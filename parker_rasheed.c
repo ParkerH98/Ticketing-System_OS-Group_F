@@ -126,9 +126,9 @@ void reserveSeats(struct Customer *customer) // files demo
 
     char filename[15];
     strcat(str, "_r.txt");
-    printf("%s\n", str);
+    // printf("%s\n", str);
     strcpy(filename, str);
-    printf("%s\n", filename);
+    // printf("%s\n", filename);
 
     FILE *fp2 = fopen(filename, "w");
 
@@ -232,9 +232,11 @@ void cancellation(int *ticket_ptr)
     }
 }
 
-struct Customer* reserveInformationFromUser() //needs work
+struct Customer reserveInformationFromUser() //needs work
 {
-    struct Customer *a = malloc(sizeof(struct Customer));
+    // struct Customer *a = malloc(sizeof(struct Customer));
+
+    struct Customer a;
 
     // printf("Please provide name: ");
     // char Name[50];
@@ -252,19 +254,29 @@ struct Customer* reserveInformationFromUser() //needs work
     // scanf("%d", &a->num_traveler);
    
     // automated for testing
-    strcpy(a->name, "Parker Hague");
-    a->dob = 19980418;
-    a->gender = 'M';
-    a->govt_id = 45259;
-    a->travel_date = 20210419;
-    a->num_traveler = 3;
+    strcpy(a.name, "Parker Hague");
+    a.dob = 19980418;
+    a.gender = 'M';
+    a.govt_id = 45259;
+    a.id = 45259;
+
+    a.travel_date = 20210419;
+    a.num_traveler = 3;
 
     printf("Enter seats\n");
-    for (int i = 0; i < a->num_traveler; i++)
+
+    // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
+    for (int i = 0; i < NUM_SEATS; i++)
+    {
+        a.seats[i] = 0;
+    }
+
+    // sets the desired customer's seats indices to be 1
+    for (int i = 0; i < a.num_traveler; i++)
     {
         int temp;
         scanf("%d", &temp);
-        a->seats[temp - 1] = 1;
+        a.seats[temp - 1] = 1;
     }
 
     return a;

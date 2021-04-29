@@ -25,6 +25,8 @@ c: $(COBJS) # step 1
 #==========================
 driver_server.o: driver_server.c $(HEADER)  # step 3
 	$(CC) $(CFLAGS) -c driver_server.c
+	
+
 
 #queue.o: queue.c # step 2
 #	$(CC) $(CFLAGS) -c queue.c
@@ -38,4 +40,4 @@ s: $(SOBJS) # step 1
 #		Utilities
 #==========================
 clean:
-	rm *.o $(EXECS)
+	rm *.o $(EXECS) *.txt
