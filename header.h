@@ -22,6 +22,9 @@
 #define BACKLOG 50
 #define THREAD_NUMBER 2
 
+#define QUEUE_SIZE 6
+
+
 // STRUCT CONSTANTS
 #define CUST_NAME_LEN 50
 #define NUM_SEATS 31 // +1 of desired seats because index 0 is unused

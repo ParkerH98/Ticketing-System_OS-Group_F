@@ -2,7 +2,7 @@
 #		Constants
 #==========================
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = 
 SOBJS = driver_server.o
 COBJS = driver_client.o
 EXECS = s c

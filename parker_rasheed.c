@@ -141,7 +141,7 @@ void reserveSeats(struct Customer *customer) // files demo
     fprintf(fp2, "%d\n", a.travel_date);
 
     fprintf(fp2, "%d\n", a.num_traveler);
-    for (int i = 1; i <= 30; i++)
+    for (int i = 0; i < NUM_SEATS; i++)
     {
         fprintf(fp2, "%d", a.seats[i]);
     }
@@ -190,16 +190,16 @@ struct Customer inquireTicket(int ticket) //file demo
     return a;
 }
 
-// struct Customer modifyTicket(struct Customer a) // file demo
-// {
-//     return a;
-// };
+struct Customer modifyTicket(struct Customer a) // file demo
+{
+    return a;
+};
 
-// struct Customer cancelTicket(ticket) //file demo
-// {
-//     struct Customer a;
-//     return a;
-// };
+struct Customer cancelTicket(ticket) //file demo
+{
+    struct Customer a;
+    return a;
+};
 
 void cancellation(int *ticket_ptr)
 {
@@ -234,36 +234,34 @@ void cancellation(int *ticket_ptr)
 
 struct Customer reserveInformationFromUser() //needs work
 {
-    // struct Customer *a = malloc(sizeof(struct Customer));
-
     struct Customer a;
 
-    // printf("Please provide name: ");
-    // char Name[50];
-    // scanf(" %s", Name);
-    // strcpy(a->name , Name);
-    // printf("Date of Birth(YYYYMMDD): ");
-    // scanf("%d", &a->dob);
-    // printf("Your gender: ");
-    // scanf(" %c", &a->gender);
-    // printf("Government ID: ");
-    // scanf("%d", &a->govt_id);
-    // printf("Available date of travel: 20210411 or 20210412.\n Select one: ");
-    // scanf("%d", &a->travel_date);
-    // printf("Number of travelers: ");
-    // scanf("%d", &a->num_traveler);
+    printf("Please enter your credentials as prompted.\n");
+    printf("Name: ");
+
+    char Name[50];
+    scanf(" %s", Name);
+    strcpy(a.name , Name);
+    printf("Date of Birth(YYYYMMDD): ");
+    scanf("%d", &a.dob);
+    printf("Gender (M or F): ");
+    scanf(" %c", &a.gender);
+    printf("Government ID: ");
+    scanf("%d", &a.govt_id);
+    printf("Available dates of travel: 20210411 or 20210412.\nSelect One: ");
+    scanf("%d", &a.travel_date);
+    printf("Number of Travelers: ");
+    scanf("%d", &a.num_traveler);
    
     // automated for testing
-    strcpy(a.name, "Parker Hague");
-    a.dob = 19980418;
-    a.gender = 'M';
-    a.govt_id = 45259;
-    a.id = 45259;
+    // strcpy(a.name, "Parker Hague");
+    // a.dob = 19980418;
+    // a.gender = 'M';
+    // a.govt_id = 45259;
+    // a.id = 45259;
+    // a.travel_date = 20210419;
+    // a.num_traveler = 3;
 
-    a.travel_date = 20210419;
-    a.num_traveler = 3;
-
-    printf("Enter seats\n");
 
     // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
     for (int i = 0; i < NUM_SEATS; i++)
@@ -271,9 +269,12 @@ struct Customer reserveInformationFromUser() //needs work
         a.seats[i] = 0;
     }
 
-    // sets the desired customer's seats indices to be 1
+    printf("Enter your desired seats to reserve:\n");
+
+    // sets the desired customer's seats' indices to be 1
     for (int i = 0; i < a.num_traveler; i++)
     {
+        printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
         int temp;
         scanf("%d", &temp);
         a.seats[temp - 1] = 1;

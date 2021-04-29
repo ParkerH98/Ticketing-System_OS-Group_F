@@ -1,11 +1,91 @@
 #include "header.h"
 
-void clientHandleSelection(int selection, void *client);
 struct Customer reserveInformationFromUser();
 
-//========================
-//   parker_client.c
-//========================
+void clientHandleSelection(int selection, void *client)
+{
+    int client_socket = *((int *)client);
+
+    //==============================
+    //    Make Ticket Reservation
+    //==============================
+    if (selection == 1)
+    {
+        struct Customer customer;
+        struct Customer *customer_ptr = &customer;
+
+        customer = reserveInformationFromUser();
+
+        printf("Order Preview:\n");
+        printf("ID: %d\n", customer.id);
+        printf("Name: %s\n", customer_ptr->name);
+        printf("DOB: %c\n", customer.dob);
+        printf("Gender: %c\n", customer.gender);
+        printf("Government ID: %d\n", customer.govt_id);
+        printf("Travel Date: %d\n", customer.travel_date);
+        printf("Number of Travelers: %d\n", customer.num_traveler);
+        printf("Seats Chosen: \n");
+        for (int i = 0; i < NUM_SEATS; i++)
+        {
+            printf("%d ", customer.seats[i]);
+        }
+        printf("\n\n");
+
+        printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
+
+        char answer[2];
+        scanf("%s", answer);
+
+        if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
+        {
+            send(client_socket, customer_ptr, sizeof(struct Customer), 0);
+        }
+        else{
+            printf("Were sorry you changed your mind. Come back next time.\n");
+            exit(0);
+        }
+    }
+
+
+    //==============================
+    //     Make Ticket Inquiry
+    //==============================
+    else if (selection == 2)
+    {
+        // inquiry();
+    }
+
+
+    //==============================
+    //   Make Ticket Modification
+    //==============================
+    else if (selection == 3)
+    {
+        // modifyReservation();
+    }
+
+
+    //==============================
+    //   Make Ticket Cancellation
+    //==============================
+    else if (selection == 4)
+    {
+        int *ticket_num = NULL;
+        printf("What is your ticket number?\n");
+        scanf("%d", ticket_num);
+
+        send(client_socket, ticket_num, sizeof(ticket_num), 0);
+    }
+
+
+    //==============================
+    //       Exit The Program
+    //==============================
+    else if (selection == 5)
+    {
+        exit(0);
+    }
+}
 
 void clientSocket_SendReceive(int port)
 {
@@ -55,56 +135,4 @@ void clientSocket_SendReceive(int port)
     clientHandleSelection(atoi(selection), client_socket_ptr);
 
     close(clientSocket);
-}
-
-
-void clientHandleSelection(int selection, void *client)
-{
-    int client_socket = *((int *)client);
-    if (selection == 1)
-    {
-        struct Customer customer;
-        struct Customer *customer_ptr = &customer;
-
-        customer = reserveInformationFromUser();
-
-        printf("Customer information menu:\n");
-        printf("Customer ID: %d\n", customer.id);
-        printf("Customer Name: %s\n", customer_ptr->name);
-        printf("Customer DOB: %d\n", customer.dob);
-        printf("Customer Gender: %c\n", customer.gender);
-        printf("Customer GOVTID: %d\n", customer.govt_id);
-        printf("Customer Travel Date: %d\n", customer.travel_date);
-        printf("Customer Num Travelers: %d\n", customer.num_traveler);
-        printf("Customer Seats: \n");
-        for (int i = 0; i < NUM_SEATS; i++)
-        {
-            printf("%d ", customer.seats[i]);
-        }
-        printf("\n");
-
-        send(client_socket, customer_ptr, sizeof(struct Customer), 0);
-        printf("RESERVATION SENT\n");
-    }
-
-    else if (selection == 2)
-    {
-        // inquiry();
-    }
-    else if (selection == 3)
-    {
-        // modifyReservation();
-    }
-    else if (selection == 4)
-    {
-        int *ticket_num = NULL;
-        printf("What is your ticket number?\n");
-        scanf("%d", ticket_num);
-
-        send(client_socket, ticket_num, sizeof(ticket_num), 0);
-    }
-    else if (selection == 5)
-    {
-        exit(0);
-    }
 }
