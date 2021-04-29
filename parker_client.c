@@ -19,7 +19,7 @@ void clientHandleSelection(int selection, void *client)
         printf("Order Preview:\n");
         printf("ID: %d\n", customer.receipt_id);
         printf("Name: %s\n", customer_ptr->name);
-        printf("DOB: %c\n", customer.dob);
+        printf("DOB: %d\n", customer.dob);
         printf("Gender: %c\n", customer.gender);
         printf("Government ID: %d\n", customer.govt_id);
         printf("Travel Date: %d\n", customer.travel_date);
@@ -39,6 +39,7 @@ void clientHandleSelection(int selection, void *client)
         if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
         {
             send(client_socket, customer_ptr, sizeof(struct Customer), 0);
+            printf("Reservation completed.\n");
         }
         else{
             printf("Were sorry you changed your mind. Come back next time.\n");
@@ -75,7 +76,6 @@ void clientHandleSelection(int selection, void *client)
         scanf("%d", ticket_num);
 
         send(client_socket, ticket_num, sizeof(ticket_num), 0);
-        printf("Reservation completed.\n");
     }
 
 

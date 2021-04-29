@@ -23,7 +23,7 @@ void serverHandleSelection(int selection, int client_socket)
         printf("Order Received:\n");
         printf("ID: %d\n", customer.receipt_id);
         printf("Name: %s\n", customer_ptr->name);
-        printf("DOB: %c\n", customer.dob);
+        printf("DOB: %d\n", customer.dob);
         printf("Gender: %c\n", customer.gender);
         printf("Government ID: %d\n", customer.govt_id);
         printf("Travel Date: %d\n", customer.travel_date);
@@ -90,7 +90,7 @@ void *handleConnection(void *client)
 
     char selection[2];
     recv(client_socket, selection, sizeof(selection), 0);
-    printf("SERVER: Selection [%s] was chosen by the customer.\n", selection);
+    printf("SERVER: Selection [%s] was chosen by the customer.\n\n", selection);
     fflush(stdout);
 
     serverHandleSelection(atoi(selection), client_socket);

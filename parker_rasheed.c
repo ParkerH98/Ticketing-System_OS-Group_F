@@ -234,9 +234,8 @@ struct Customer reserveInformationFromUser() //needs work
 {
     struct Customer a;
 
-    printf("Please enter your credentials as prompted.\n");
-    printf("Name: ");
-
+    // printf("Please enter your credentials as prompted.\n\n");
+    // printf("Name: ");
     // char Name[50];
     // scanf(" %s", Name);
     // strcpy(a.name , Name);
@@ -277,6 +276,7 @@ struct Customer reserveInformationFromUser() //needs work
         scanf("%d", &temp);
         a.seats[temp - 1] = 1;
     }
+    printf("\n");
 
     return a;
 }
