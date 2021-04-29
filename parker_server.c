@@ -21,7 +21,7 @@ void serverHandleSelection(int selection, int client_socket)
         recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
         printf("Order Received:\n");
-        printf("ID: %d\n", customer.id);
+        printf("ID: %d\n", customer.receipt_id);
         printf("Name: %s\n", customer_ptr->name);
         printf("DOB: %c\n", customer.dob);
         printf("Gender: %c\n", customer.gender);

@@ -17,7 +17,7 @@ void clientHandleSelection(int selection, void *client)
         customer = reserveInformationFromUser();
 
         printf("Order Preview:\n");
-        printf("ID: %d\n", customer.id);
+        printf("ID: %d\n", customer.receipt_id);
         printf("Name: %s\n", customer_ptr->name);
         printf("DOB: %c\n", customer.dob);
         printf("Gender: %c\n", customer.gender);
@@ -75,6 +75,7 @@ void clientHandleSelection(int selection, void *client)
         scanf("%d", ticket_num);
 
         send(client_socket, ticket_num, sizeof(ticket_num), 0);
+        printf("Reservation completed.\n");
     }
 
 

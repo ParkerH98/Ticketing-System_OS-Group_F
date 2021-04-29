@@ -31,7 +31,7 @@
 
 struct Customer
 {
-    int id;         // receipt id
+    int receipt_id;         // receipt id
     char name[CUST_NAME_LEN];  // name of the customer
     int dob;        // date of birth
     char gender;    // gender of the customer

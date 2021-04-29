@@ -6,11 +6,11 @@
 
 struct Customer
 {
-    int id;           // receipt id
+    int receipt_id;           // receipt receipt_id
     char name[50];    // name of the customer
     int dob;          // date of birth
     char gender;      // gender of the customer
-    int govt_id;      //government id
+    int govt_id;      //government receipt_id
     int travel_date;  //date they will travel. Format YYYYMMDD
     int num_traveler; // number of traveller
    // bool seats[7];   //how many seat the customer wants to reserve
@@ -23,7 +23,7 @@ struct returnCustomer {
 
 struct Customer initializeCust(struct Customer a)
 {
-    a.id = 100;
+    a.receipt_id = 100;
     a.dob = 20000101;
     strcpy(a.name, "void");
     a.gender = 'e';
@@ -45,12 +45,12 @@ void reserveSeat(struct Customer cust){
     if(fpt==NULL){
         printf("I have another guy\n");
         fpt = fopen("ReserveSeats.csv","w+");
-        printf(fpt,"id, name, dob, gender, gov_id, travel_date, num_traveler, seats\n");
+        printf(fpt,"receipt_id, name, dob, gender, gov_id, travel_date, num_traveler, seats\n");
         exit(EXIT_FAILURE);
     }
-    printf("Customer's id is %d \n", cust.id);
+    printf("Customer's receipt_id is %d \n", cust.receipt_id);
     while (fgets(buffer, 1024, fpt)){
-        printf(fpt,"%d, %[^,], %d, %s, %d, %d, %d, %d\n",cust.id,cust.name,cust.dob,cust.gender,cust.govt_id,cust.travel_date,cust.num_traveler);
+        printf(fpt,"%d, %[^,], %d, %s, %d, %d, %d, %d\n",cust.receipt_id,cust.name,cust.dob,cust.gender,cust.govt_id,cust.travel_date,cust.num_traveler);
         printf("seats reserved successfully!");
     }
     fclose(fpt);
