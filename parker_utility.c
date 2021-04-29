@@ -57,7 +57,7 @@ int head = 0;
 int tail = -1;
 int count = 0;
 
-void insert(int *data)
+void insertConnection(int *data)
 {
     if (count != QUEUE_SIZE)
     {

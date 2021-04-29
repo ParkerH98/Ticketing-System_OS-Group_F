@@ -1,6 +1,5 @@
 #include "parker_server.c"
 #include "parker_utility.c"
-
 #include "parker_rasheed.c"
 
 // Usage Instructions:
@@ -8,8 +7,10 @@
 
 int main()
 {
-    pthread_mutex_init(&mutex, NULL);
+    // initializes the mutex used when inserting/removing to/from the thread pool
+    pthread_mutex_init(&mutex, NULL); 
 
+    // creates NUM_SERVER number of processes that are servers
     for (int i = 0; i < NUM_SERVERS; i++)
     {
         if (fork() == 0)

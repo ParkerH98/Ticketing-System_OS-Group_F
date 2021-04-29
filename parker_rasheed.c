@@ -257,7 +257,7 @@ struct Customer reserveInformationFromUser() //needs work
     a.govt_id = 56441;
     a.receipt_id = 45259;
     a.travel_date = 20210419;
-    a.num_traveler = 3;
+    a.num_traveler = 1;
 
 
     // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
@@ -266,16 +266,18 @@ struct Customer reserveInformationFromUser() //needs work
         a.seats[i] = 0;
     }
 
-    printf("Enter your desired seats to reserve:\n");
+    a.seats[4] = 1;
+
+    // printf("Enter your desired seats to reserve:\n");
 
     // sets the desired customer's seats' indices to be 1
-    for (int i = 0; i < a.num_traveler; i++)
-    {
-        printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
-        int temp;
-        scanf("%d", &temp);
-        a.seats[temp - 1] = 1;
-    }
+    // for (int i = 0; i < a.num_traveler; i++)
+    // {
+    //     printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
+    //     int temp;
+    //     scanf("%d", &temp);
+    //     a.seats[temp - 1] = 1;
+    // }
     printf("\n");
 
     return a;

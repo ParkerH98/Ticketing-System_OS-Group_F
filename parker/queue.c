@@ -37,7 +37,7 @@ int size()
     return count;
 }
 
-void insert(int *data)
+void insertConnection(int *data)
 {
     if (count != QUEUE_SIZE)
     {

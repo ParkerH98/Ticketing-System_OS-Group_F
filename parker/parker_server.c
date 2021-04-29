@@ -49,7 +49,7 @@ void serverSocket_SendReceive(int port)
 
         //make sure only one thread messes with the queue at a time
         pthread_mutex_lock(&mutex);
-        insert(client_socket);
+        insertConnection(client_socket);
         pthread_cond_signal(&condition_thread);
         pthread_mutex_unlock(&mutex);
     }

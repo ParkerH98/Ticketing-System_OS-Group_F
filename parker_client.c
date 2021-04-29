@@ -31,10 +31,11 @@ void clientHandleSelection(int selection, void *client)
         }
         printf("\n\n");
 
-        printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
+        // printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
 
         char answer[2];
-        scanf("%s", answer);
+        // scanf("%s", answer);
+        sprintf(answer, "%s", "y");
 
         if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
         {

@@ -15,6 +15,8 @@
 #include <pthread.h> // threads
 #include <time.h> // time for random seed
 #include <semaphore.h> // semaphores
+#include <assert.h> // error checking
+
 
 // SERVER CONSTANTS
 #define PORT 9087
