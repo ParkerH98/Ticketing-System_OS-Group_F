@@ -5,9 +5,196 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-int receipt_num = 1; //please call this as global variable
+struct Customer initializeCust();
 
+void reserveSeats(struct Customer *customer)
+{
+    struct Customer a;
+    a = *customer;
+    // gives lock to writer
+    sem_wait(wrt);
 
+    // BEGINNING CRITICAL SECTION
+
+    //FILE *fp1;
+    //fp1 = fopen("summary.txt", "w");
+
+    if (!(a.receipt_id >= 2000 && a.receipt_id < 3000))
+    {
+        a.receipt_id = receipt_num;
+        receipt_num++;
+    }
+
+    printf("Rceipt_id: %d\n", a.receipt_id);
+    printf("Receipt_num: %d\n", receipt_num);
+
+    int x = a.receipt_id;
+
+    //fprintf(fp1, "%d, e\n", x);
+
+    char str[20];
+    sprintf(str, "%d", x);
+
+    char filename[15];
+    strcat(str, "_r.txt");
+    // printf("%s\n", str);
+    strcpy(filename, str);
+    // printf("%s\n", filename);
+
+    FILE *fp2 = fopen(filename, "w");
+
+    //print the receipt information in the file
+
+    fprintf(fp2, "%s\n", a.name);
+    fprintf(fp2, "%d\n", a.govt_id);
+    fprintf(fp2, "%d\n", a.travel_date);
+
+    fprintf(fp2, "%d\n", a.num_traveler);
+    for (int i = 0; i < NUM_SEATS; i++)
+    {
+        fprintf(fp2, "%d", a.seats[i]);
+    }
+    fprintf(fp2, "\n");
+
+    fclose(fp2);
+
+    sem_post(wrt);
+}
+
+struct Customer inquireTicket(int ticket) //file demo
+{
+    struct Customer a;
+    a = initializeCust();
+    a.receipt_id = ticket;
+    strcpy(a.name, "Harry Potter");
+    // a.name = "Harry Potter";
+    a.dob = 19940920;
+    a.gender = 'm';
+    a.govt_id = 405762;
+    a.travel_date = 20210414;
+    a.num_traveler = 5;
+
+    a.seats[3] = 1;
+    a.seats[8] = 1;
+    a.seats[10] = 1;
+    a.seats[18] = 1;
+    a.seats[23] = 1;
+
+    return a;
+}
+
+void modify(int ticket)
+{
+    char filename[11];
+    char temp[4];
+
+    sprintf(temp, "%d", ticket);
+    strcpy(filename, temp);
+    strcat(filename, "_r.txt");
+
+    if (fopen(filename, "r"))
+    {
+        printf("Ticket FOUND %d\n", ticket);
+        printf("Modifying ticket. Please enter the information below. \n");
+
+        struct Customer a;
+        a = reserveInformationFromUser();
+
+        ticket = ticket + 1000;
+        a.receipt_id = ticket;
+
+        struct Customer *a_ptr;
+        a_ptr = &a;
+        reserveSeats(a_ptr);
+
+        remove(filename);
+    }
+    else
+    {
+        printf("Ticket not found.\n");
+    }
+};
+
+void cancellation(int *ticket_ptr)
+{
+    int ticket = *ticket_ptr;
+    char filename[11];
+    char temp[4];
+
+    sprintf(temp, "%d", ticket);
+    strcpy(filename, temp);
+    strcat(filename, "_r.txt");
+
+    //printf("%s\n", filename);
+
+    if (fopen(filename, "r"))
+    {
+        printf("Ticket FOUND %d\n", ticket);
+        printf("Are you sure you want to cancel the reservation? Y/N\n");
+        char ans;
+        scanf(" %c", &ans);
+        printf("Reservation for ticket %d is cancelled.\n", ticket);
+        remove(filename);
+    }
+    else
+    {
+        printf("The ticket doesn't exist.\n");
+    }
+}
+
+struct Customer reserveInformationFromUser()
+{
+    struct Customer a;
+
+    // printf("Please enter your credentials as prompted.\n\n");
+    // printf("Name: ");
+    // char Name[50];
+    // scanf(" %s", Name);
+    // strcpy(a.name , Name);
+    // printf("Date of Birth(YYYYMMDD): ");
+    // scanf("%d", &a.dob);
+    // printf("Gender (M or F): ");
+    // scanf(" %c", &a.gender);
+    // printf("Government ID: ");
+    // scanf("%d", &a.govt_id);
+    // printf("Available dates of travel: 20210411 or 20210412.\nSelect One: ");
+    // scanf("%d", &a.travel_date);
+    // printf("Number of Travelers: ");
+    // scanf("%d", &a.num_traveler);
+
+    // automated for testing
+    strcpy(a.name, "Parker");
+    a.dob = 19980418;
+    a.gender = 'M';
+    a.govt_id = 56441;
+    a.receipt_id = 45259;
+    a.travel_date = 20210419;
+    a.num_traveler = 1;
+
+    // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
+    for (int i = 0; i < NUM_SEATS; i++)
+    {
+        a.seats[i] = 0;
+    }
+
+    a.seats[4] = 1;
+
+    // print tarin here
+
+    // printf("Enter your desired seats to reserve:\n");
+
+    // sets the desired customer's seats' indices to be 1
+    // for (int i = 0; i < a.num_traveler; i++)
+    // {
+    //     printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
+    //     int temp;
+    //     scanf("%d", &temp);
+    //     a.seats[temp - 1] = 1;
+    // }
+    printf("\n");
+
+    return a;
+}
 
 struct Customer initializeCust()
 {
@@ -105,205 +292,9 @@ struct Customer printReceipt(struct Customer a, int choice)
 }
 
 
-void reserveSeats(struct Customer *customer) // files demo
-{
-    struct Customer a;
-    a = *customer;
-    // gives lock to writer
-    sem_wait(wrt);
-
-    // BEGINNING CRITICAL SECTION
-
-    //FILE *fp1;
-    //fp1 = fopen("summary.txt", "w");
 
 
-    if (a.receipt_id < 1000) 
-    {
-        a.receipt_id = receipt_num;
-        receipt_num++;
-    }
 
-    int x = a.receipt_id;
-
-    //fprintf(fp1, "%d, e\n", x);
-
-    char str[20];
-    sprintf(str, "%d", x);
-
-    char filename[15];
-    strcat(str, "_r.txt");
-    // printf("%s\n", str);
-    strcpy(filename, str);
-    // printf("%s\n", filename);
-
-    FILE *fp2 = fopen(filename, "w");
-
-    //print the receipt information in the file
-
-    fprintf(fp2, "%s\n", a.name);
-    fprintf(fp2, "%d\n", a.govt_id);
-    fprintf(fp2, "%d\n", a.travel_date);
-
-    fprintf(fp2, "%d\n", a.num_traveler);
-    for (int i = 0; i < NUM_SEATS; i++)
-    {
-        fprintf(fp2, "%d", a.seats[i]);
-    }
-    fprintf(fp2, "\n");
-
-
-    fclose(fp2);
-
-    sem_post(wrt);
-}
-
-int availableFunction(struct Customer a) //files demo
-{
-    return 10;
-}
-
-int *availableFunction2(struct Customer a) //files demo
-{
-    static int r[] = {10, 3, 6, 8, 9, 10, 16, 17, 18, 22, 23};
-    // int i;
-
-    return r;
-}
-
-struct Customer inquireTicket(int ticket) //file demo
-{
-    struct Customer a;
-    a = initializeCust();
-    a.receipt_id = ticket;
-    strcpy(a.name, "Harry Potter");
-    // a.name = "Harry Potter";
-    a.dob = 19940920;
-    a.gender = 'm';
-    a.govt_id = 405762;
-    a.travel_date = 20210414;
-    a.num_traveler = 5;
-
-    a.seats[3] = 1;
-    a.seats[8] = 1;
-    a.seats[10] = 1;
-    a.seats[18] = 1;
-    a.seats[23] = 1;
-
-    return a;
-}
-
-struct Customer modify(int ticket) // file demo
-{
-    char filename[11];
-    char temp[4];
-    
-    sprintf(temp, "%d", ticket);
-    strcpy(filename, temp);
-    strcat(filename, "_r.txt");
-
-    if( fopen(filename, "r") )
-    {
-        printf("Ticket FOUND %d\n", ticket);
-        printf("Modifying ticket. Please enter the information below. \n");
-        
-        struct Customer a;
-        a = reserveInformationFromUser(a);
-
-        ticket = ticket + 1000;
-        a.id = ticket;
-        reserveSeats( a );
-
-        remove(filename);
-    }
-    else
-    {
-        printf("Ticket not found.\n");
-    }
-};
-
-
-void cancellation(int *ticket_ptr)
-{
-    int ticket = *ticket_ptr;
-    char filename[11];
-    char temp[4];
-    
-    sprintf(temp, "%d", ticket);
-    strcpy(filename, temp);
-    strcat(filename, "_r.txt");
-
-    //printf("%s\n", filename);
-
-    if( fopen(filename, "r") )
-    {
-        printf("Ticket FOUND %d\n", ticket);
-        printf("Are you sure you want to cancel the reservation? Y/N\n");
-        char ans;
-        scanf(" %c", &ans);
-        printf("Reservation for ticket %d is cancelled.\n", ticket);
-        remove(filename);
-    }
-    else
-    {
-        printf("The ticket doesn't exist.\n");
-    }
-}
-
-struct Customer reserveInformationFromUser()
-{
-    struct Customer a;
-
-    printf("Please enter your credentials as prompted.\n\n");
-    printf("Name: ");
-    char Name[50];
-    scanf(" %s", Name);
-    strcpy(a.name , Name);
-    printf("Date of Birth(YYYYMMDD): ");
-    scanf("%d", &a.dob);
-    printf("Gender (M or F): ");
-    scanf(" %c", &a.gender);
-    printf("Government ID: ");
-    scanf("%d", &a.govt_id);
-    printf("Available dates of travel: 20210411 or 20210412.\nSelect One: ");
-    scanf("%d", &a.travel_date);
-    printf("Number of Travelers: ");
-    scanf("%d", &a.num_traveler);
-   
-    // automated for testing
-    // strcpy(a.name, "Parker");
-    // a.dob = 19980418;
-    // a.gender = 'M';
-    // a.govt_id = 56441;
-    // a.receipt_id = 45259;
-    // a.travel_date = 20210419;
-    // a.num_traveler = 1;
-
-
-    // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
-    for (int i = 0; i < NUM_SEATS; i++)
-    {
-        a.seats[i] = 0;
-    }
-
-    // a.seats[4] = 1;
-
-    // print tarin here
-
-    printf("Enter your desired seats to reserve:\n");
-
-    // sets the desired customer's seats' indices to be 1
-    for (int i = 0; i < a.num_traveler; i++)
-    {
-        printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
-        int temp;
-        scanf("%d", &temp);
-        a.seats[temp - 1] = 1;
-    }
-    printf("\n");
-
-    return a;
-}
 
 // int main()
 // {

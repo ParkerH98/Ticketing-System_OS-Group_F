@@ -1,91 +1,120 @@
 #include "header.h"
 
 struct Customer reserveInformationFromUser();
+void promptMenu(int *selection);
 
 void clientHandleSelection(int selection, void *client)
 {
     int client_socket = *((int *)client);
 
-    //==============================
-    //    Make Ticket Reservation
-    //==============================
-    if (selection == 1)
+    while(1)
     {
-        struct Customer customer;
-        struct Customer *customer_ptr = &customer;
 
-        customer = reserveInformationFromUser();
-
-        printf("Order Preview:\n");
-        printf("ID: %d\n", customer.receipt_id);
-        printf("Name: %s\n", customer_ptr->name);
-        printf("DOB: %d\n", customer.dob);
-        printf("Gender: %c\n", customer.gender);
-        printf("Government ID: %d\n", customer.govt_id);
-        printf("Travel Date: %d\n", customer.travel_date);
-        printf("Number of Travelers: %d\n", customer.num_traveler);
-        printf("Seats Chosen: \n");
-        for (int i = 0; i < NUM_SEATS; i++)
+        //==============================
+        //    Make Ticket Reservation
+        //==============================
+        if (selection == 1)
         {
-            printf("%d ", customer.seats[i]);
+            struct Customer customer;
+            struct Customer *customer_ptr = &customer;
+
+            customer = reserveInformationFromUser();
+
+            printf("Order Preview:\n");
+            printf("ID: %d\n", customer.receipt_id);
+            printf("Name: %s\n", customer_ptr->name);
+            printf("DOB: %d\n", customer.dob);
+            printf("Gender: %c\n", customer.gender);
+            printf("Government ID: %d\n", customer.govt_id);
+            printf("Travel Date: %d\n", customer.travel_date);
+            printf("Number of Travelers: %d\n", customer.num_traveler);
+            printf("Seats Chosen: \n");
+            for (int i = 0; i < NUM_SEATS; i++)
+            {
+                printf("%d ", customer.seats[i]);
+            }
+            printf("\n\n");
+
+            // printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
+
+            char answer[2];
+            // scanf("%s", answer);
+            sprintf(answer, "%s", "y");
+
+            if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
+            {
+                send(client_socket, customer_ptr, sizeof(struct Customer), 0);
+
+                printf("Reservation completed. You will now be brought back to the main menu.\n\n\n");
+                promptMenu(&selection);
+                continue;
+            }
+            else
+            {
+                printf("Were sorry you changed your mind. Come back next time.\n");
+                exit(0);
+            }
         }
-        printf("\n\n");
 
-        // printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
-
-        char answer[2];
-        // scanf("%s", answer);
-        sprintf(answer, "%s", "y");
-
-        if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
+        //==============================
+        //     Make Ticket Inquiry
+        //==============================
+        else if (selection == 2)
         {
-            send(client_socket, customer_ptr, sizeof(struct Customer), 0);
-            printf("Reservation completed.\n");
+            // inquiry();
         }
-        else{
-            printf("Were sorry you changed your mind. Come back next time.\n");
+
+
+        //==============================
+        //   Make Ticket Modification
+        //==============================
+        else if (selection == 3)
+        {
+            printf("\nPlease enter a ticket number to modify: ");
+
+            int *ticket_num;
+            scanf("%d", ticket_num);
+
+            printf("EXECUTED1\n");
+
+            send(client_socket, ticket_num, sizeof(ticket_num), 0);
+
+            printf("EXECUTED2\n");
+
+            printf("Modification completed. You will now be brought back to the main menu.\n\n\n");
+            promptMenu(&selection);
+            continue;
+        }
+
+
+        //==============================
+        //   Make Ticket Cancellation
+        //==============================
+        else if (selection == 4)
+        {
+            int ticket_num;
+            printf("\nWhat is your ticket number?\n");
+            scanf("%d", &ticket_num);
+
+            printf("EXECUTED1\n");
+
+            send(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            printf("EXECUTED2\n");
+
+            printf("Cancellation completed. You will now be brought back to the main menu.\n\n\n");
+            promptMenu(&selection);
+            continue;
+        }
+
+
+        //==============================
+        //       Exit The Program
+        //==============================
+        else if (selection == 5)
+        {
             exit(0);
         }
-    }
-
-
-    //==============================
-    //     Make Ticket Inquiry
-    //==============================
-    else if (selection == 2)
-    {
-        // inquiry();
-    }
-
-
-    //==============================
-    //   Make Ticket Modification
-    //==============================
-    else if (selection == 3)
-    {
-        // modifyReservation();
-    }
-
-
-    //==============================
-    //   Make Ticket Cancellation
-    //==============================
-    else if (selection == 4)
-    {
-        int *ticket_num = NULL;
-        printf("What is your ticket number?\n");
-        scanf("%d", ticket_num);
-
-        send(client_socket, ticket_num, sizeof(ticket_num), 0);
-    }
-
-
-    //==============================
-    //       Exit The Program
-    //==============================
-    else if (selection == 5)
-    {
-        exit(0);
     }
 }
 
@@ -137,4 +166,11 @@ void clientSocket_SendReceive(int port)
     clientHandleSelection(atoi(selection), client_socket_ptr);
 
     close(clientSocket);
+}
+
+void promptMenu(int *selection)
+{
+    printf("\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n");
+
+    scanf("%d", selection);
 }

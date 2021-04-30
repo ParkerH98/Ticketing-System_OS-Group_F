@@ -19,7 +19,7 @@
 
 
 // SERVER CONSTANTS
-#define PORT 9087
+#define PORT 9006
 #define NUM_SERVERS 2
 #define BACKLOG 50
 #define THREAD_NUMBER 2
@@ -47,6 +47,6 @@ sem_t *wrt;
 pthread_mutex_t mutex;
 static int read_count = 0;
 
-int receiptNum = 1001;
+int receipt_num = 1001;
 
 #endif

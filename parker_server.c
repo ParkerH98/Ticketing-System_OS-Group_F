@@ -4,87 +4,100 @@ int *removeData();
 void insertConnection(int *data);
 void cancellation(int *ticket);
 void reserveSeats(struct Customer *customer);
+void modify(int ticket);
+struct Customer reserveInformationFromUser();
 
-pthread_mutex_t mutex; 
+pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 void serverHandleSelection(int selection, int client_socket)
 {
-    //==============================
-    //    Make Ticket Reservation
-    //==============================
-    if (selection == 1)
+    while(1)
     {
-        // assigning poointer copy because recv() wants a pointer to store the data in
-        struct Customer customer;
-        struct Customer *customer_ptr = &customer;
-
-        // receives the Customer struct from the client
-        recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
-
-        printf("Order Received:\n");
-        printf("ID: %d\n", customer.receipt_id);
-        printf("Name: %s\n", customer_ptr->name);
-        printf("DOB: %d\n", customer.dob);
-        printf("Gender: %c\n", customer.gender);
-        printf("Government ID: %d\n", customer.govt_id);
-        printf("Travel Date: %d\n", customer.travel_date);
-        printf("Number of Travelers: %d\n", customer.num_traveler);
-        printf("Seats Chosen: \n");
-        for (int i = 0; i < NUM_SEATS; i++)
+        //==============================
+        //    Make Ticket Reservation
+        //==============================
+        if (selection == 1)
         {
-            printf("%d ", customer.seats[i]);
+            // assigning poointer copy because recv() wants a pointer to store the data in
+            struct Customer customer;
+            struct Customer *customer_ptr = &customer;
+
+            // receives the Customer struct from the client
+            recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
+
+            printf("Order Received:\n");
+            printf("ID: %d\n", customer.receipt_id);
+            printf("Name: %s\n", customer_ptr->name);
+            printf("DOB: %d\n", customer.dob);
+            printf("Gender: %c\n", customer.gender);
+            printf("Government ID: %d\n", customer.govt_id);
+            printf("Travel Date: %d\n", customer.travel_date);
+            printf("Number of Travelers: %d\n", customer.num_traveler);
+            printf("Seats Chosen: \n");
+            for (int i = 0; i < NUM_SEATS; i++)
+            {
+                printf("%d ", customer.seats[i]);
+            }
+            printf("\n\n");
+
+            // assertion to check a string and int
+            // assert(strcmp(customer.name, "Parker") == 0);
+            // assert(customer.dob == 19980418);
+
+            // funcion handles the file operations necessary to reserve seats
+
+            reserveSeats(customer_ptr);
         }
-        printf("\n\n");
 
-        // assertion to check a string and int
-        assert(strcmp(customer.name, "Parker") == 0);
-        assert(customer.dob == 19980418);
+        //==============================
+        //     Make Ticket Inquiry
+        //==============================
+        else if (selection == 2)
+        {
+            // inquiry();
+        }
 
-        // funcion handles the file operations necessary to reserve seats
-        
-        reserveSeats(customer_ptr);
+        //==============================
+        //   Make Ticket Modification
+        //==============================
+        else if (selection == 3)
+        {
+            int *ticket_num;
+
+            recv(client_socket, ticket_num, sizeof(ticket_num), 0);
+
+            modify(*ticket_num);
+        }
+
+        //==============================
+        //   Make Ticket Cancellation
+        //==============================
+        else if (selection == 4)
+        {
+
+            printf("EXCUTED NOW\n");
+            int ticket_num;
+
+            recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
+            printf("EXCUTED later\n");
+
+            printf("Ticket number received: %d\n", ticket_num);
+
+            cancellation(&ticket_num);
+        }
+
+        //==============================
+        //       Exit The Program
+        //==============================
+        else if (selection == 5)
+        {
+            exit(0);
+        }
     }
 
 
-    //==============================
-    //     Make Ticket Inquiry
-    //==============================
-    else if (selection == 2)
-    {
-        // inquiry();
-    }
-
-
-    //==============================
-    //   Make Ticket Modification
-    //==============================
-    else if (selection == 3)
-    {
-        // modifyReservation();
-    }
-
-
-    //==============================
-    //   Make Ticket Cancellation
-    //==============================
-    else if (selection == 4)
-    {
-        int *ticket_num = NULL;
-
-        recv(client_socket, ticket_num, sizeof(ticket_num), 0);
-
-        cancellation(ticket_num);
-    }
-
-
-    //==============================
-    //       Exit The Program
-    //==============================
-    else if (selection == 5)
-    {
-        exit(0);
-    }
+    
 }
 
 
@@ -96,7 +109,7 @@ void *handleConnection(void *client)
     printf("SERVER: Connected to client.\n");
 
     // sends the menu to the client
-    char menu[256] = "\n========================\n    Reservation Menu\n========================\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
+    char menu[256] = "\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
     send(client_socket, menu, sizeof(menu), 0);
 
     // receives the clients menu selection
