@@ -53,6 +53,7 @@ void serverHandleSelection(int selection, int client_socket)
             continue;
         }
 
+
         //==============================
         //     Make Ticket Inquiry
         //==============================
@@ -63,6 +64,7 @@ void serverHandleSelection(int selection, int client_socket)
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
+
 
         //==============================
         //   Make Ticket Modification
@@ -77,6 +79,7 @@ void serverHandleSelection(int selection, int client_socket)
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
+
 
         //==============================
         //   Make Ticket Cancellation
@@ -95,6 +98,7 @@ void serverHandleSelection(int selection, int client_socket)
             continue;
         }
 
+
         //==============================
         //       Exit The Program
         //==============================
@@ -103,9 +107,6 @@ void serverHandleSelection(int selection, int client_socket)
             exit(0);
         }
     }
-
-
-    
 }
 
 

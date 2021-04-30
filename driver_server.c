@@ -1,6 +1,6 @@
 #include "parker_server.c"
 #include "parker_utility.c"
-#include "parker_rasheed.c"
+#include "rasheed.c"
 
 // Usage Instructions:
 // make s && ./s
