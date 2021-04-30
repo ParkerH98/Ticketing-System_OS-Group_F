@@ -63,7 +63,16 @@ void clientHandleSelection(int selection, void *client)
         //==============================
         else if (selection == 2)
         {
-            // inquiry();
+            printf("\nPlease enter a ticket number for inquiry: ");
+
+            // gets ticket number and sends to server
+            int ticket_num;
+            scanf("%d", &ticket_num);
+            send(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            promptMenu(&selection);
+            send(client_socket, &selection, sizeof(selection), 0);
+            continue;
         }
 
 

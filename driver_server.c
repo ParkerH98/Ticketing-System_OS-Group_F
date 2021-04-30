@@ -2,11 +2,15 @@
 #include "parker_utility.c"
 #include "rasheed.c"
 
+void createTrainFiles();
+
 // Usage Instructions:
 // make s && ./s
 
 int main()
 {
+    createTrainFiles();
+
     // initializes the mutex used when inserting/removing to/from the thread pool
     pthread_mutex_init(&mutex, NULL); 
 

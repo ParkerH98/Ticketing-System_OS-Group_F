@@ -6,6 +6,7 @@ void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
 void modify(int ticket, int client_socket);
 struct Customer reserveInformationFromUser();
+void inquiry(int ticket);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
@@ -59,7 +60,10 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 2)
         {
-            // inquiry();
+            int ticket_num;
+            recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            inquiry(ticket_num);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
