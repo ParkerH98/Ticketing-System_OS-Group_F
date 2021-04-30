@@ -173,7 +173,7 @@ void cancellation(int *ticket_ptr, int client_socket)
     int ticket = *ticket_ptr;
     char filename[11];
     char temp[10];
-
+//////////////////////////////////////////
     sprintf(temp, "%d", ticket);
     strcpy(filename, temp);
     strcat(filename, "_r.txt");
@@ -184,6 +184,48 @@ void cancellation(int *ticket_ptr, int client_socket)
     {
         char confirmation_msg[1024];
         sprintf(confirmation_msg, "Ticket [%d] was found.\nAre you sure you want to cancel the reservation (Y or N)?\n", ticket);
+
+
+        
+        FILE *fp1;
+        fp1 = fopen(filename, "r");
+
+        char _name[50];
+        int _govt, _day, _traveler;
+        char _seats[35];
+
+        fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
+        fclose(fp1);
+
+
+        char Train[32];
+        char Day[5];
+        sprintf(Day, "%d", _day);
+
+
+        strcpy(Train, "train_day");
+        strcat(Train, Day);
+        strcat(Train, ".txt");
+
+        fp1 = fopen(Train, "r");
+        
+        char seats_now[31];
+        fscanf(fp1, "%s", seats_now);
+
+        fclose(fp1);
+
+
+        fp1 = fopen(Train, "w");
+        for(int i=0; i<30; i++)
+        {
+            if( _seats[i] ) seats_now[i] = '0';
+        }
+
+        fprintf(fp1, "%s", seats_now);
+
+        fclose(fp1);
+        
+/////////////////////////////////////////////////////
 
         // sends confirmation message to the client
         send(client_socket, confirmation_msg, sizeof(confirmation_msg), 0);
