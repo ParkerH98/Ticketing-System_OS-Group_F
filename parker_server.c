@@ -11,6 +11,17 @@ void inquiry(int ticket);
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
+/*
+-------------------------------------------------------------
+This function is called by handleConnection() and carries out
+the operations chosen by the client's selection. The possible 
+operations include reserving, inquiring, modifying, and canceling
+a ticket.
+
+@param selection is an int representing the customer's menu selection
+@param client_socket is an int containing the client socket connection
+@return: void
+*/
 void serverHandleSelection(int selection, int client_socket)
 {
     while(1)
@@ -20,7 +31,7 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         if (selection == 1)
         {
-            // assigning poointer copy because recv() wants a pointer to store the data in
+            // assigning pointer copy because recv() wants a pointer to store the data in
             struct Customer customer;
             struct Customer *customer_ptr = &customer;
 
@@ -28,7 +39,6 @@ void serverHandleSelection(int selection, int client_socket)
             recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
             printf("Order Received:\n");
-            printf("ID: %d\n", customer.receipt_id);
             printf("Name: %s\n", customer.name);
             printf("DOB: %d\n", customer.dob);
             printf("Gender: %c\n", customer.gender);
@@ -46,10 +56,9 @@ void serverHandleSelection(int selection, int client_socket)
             // assert(strcmp(customer.name, "Parker") == 0);
             // assert(customer.dob == 19980418);
 
-            // funcion handles the file operations necessary to reserve seats
-
             reserveSeats(customer_ptr, client_socket);
 
+            // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
@@ -60,11 +69,13 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 2)
         {
+            // receives the customer's ticket number
             int ticket_num;
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
             inquiry(ticket_num);
 
+            // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
@@ -75,11 +86,13 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 3)
         {
+            // receives the customer's ticket number
             int ticket_num;
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
             modify(ticket_num, client_socket);
 
+            // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
@@ -90,14 +103,15 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 4)
         {
+            // receives the customer's ticket number
             int ticket_num;
-
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
             printf("Ticket number received: %d\n", ticket_num);
 
             cancellation(&ticket_num, client_socket);
 
+            // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
@@ -112,6 +126,7 @@ void serverHandleSelection(int selection, int client_socket)
         }
     }
 }
+
 
 /*
 -------------------------------------------------------------
@@ -138,9 +153,6 @@ void *handleConnection(void *client)
     // receives the clients menu selection
     char selection[2];
     recv(client_socket, selection, sizeof(selection), 0);
-
-    // printf("SERVER: Selection [%s] was chosen by the customer.\n\n", selection);
-    // fflush(stdout);
 
     // function handles the client's menu selection (reserve, inquire, modify, cancel, & exit)
     serverHandleSelection(atoi(selection), client_socket);
