@@ -48,6 +48,9 @@ void serverHandleSelection(int selection, int client_socket)
             // funcion handles the file operations necessary to reserve seats
 
             reserveSeats(customer_ptr);
+
+            recv(client_socket, selection, sizeof(selection), 0);
+            continue;
         }
 
         //==============================
@@ -56,6 +59,9 @@ void serverHandleSelection(int selection, int client_socket)
         else if (selection == 2)
         {
             // inquiry();
+
+            recv(client_socket, selection, sizeof(selection), 0);
+            continue;
         }
 
         //==============================
@@ -68,6 +74,9 @@ void serverHandleSelection(int selection, int client_socket)
             recv(client_socket, ticket_num, sizeof(ticket_num), 0);
 
             modify(*ticket_num);
+
+            recv(client_socket, selection, sizeof(selection), 0);
+            continue;
         }
 
         //==============================
@@ -85,6 +94,9 @@ void serverHandleSelection(int selection, int client_socket)
             printf("Ticket number received: %d\n", ticket_num);
 
             cancellation(&ticket_num);
+
+            recv(client_socket, selection, sizeof(selection), 0);
+            continue;
         }
 
         //==============================

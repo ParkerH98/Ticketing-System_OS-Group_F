@@ -47,6 +47,8 @@ void clientHandleSelection(int selection, void *client)
 
                 printf("Reservation completed. You will now be brought back to the main menu.\n\n\n");
                 promptMenu(&selection);
+
+                send(client_socket, &selection, sizeof(selection), 0);
                 continue;
             }
             else
@@ -56,6 +58,8 @@ void clientHandleSelection(int selection, void *client)
             }
         }
 
+
+            
         //==============================
         //     Make Ticket Inquiry
         //==============================
@@ -83,6 +87,8 @@ void clientHandleSelection(int selection, void *client)
 
             printf("Modification completed. You will now be brought back to the main menu.\n\n\n");
             promptMenu(&selection);
+
+            send(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
@@ -104,6 +110,7 @@ void clientHandleSelection(int selection, void *client)
 
             printf("Cancellation completed. You will now be brought back to the main menu.\n\n\n");
             promptMenu(&selection);
+            send(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
