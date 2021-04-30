@@ -38,10 +38,11 @@ void serverHandleSelection(int selection, int client_socket)
         printf("\n\n");
 
         // assertion to check a string and int
-        assert(strcmp(customer.name, "Parker Hague") == 0);
+        assert(strcmp(customer.name, "Parker") == 0);
         assert(customer.dob == 19980418);
 
         // funcion handles the file operations necessary to reserve seats
+        
         reserveSeats(customer_ptr);
     }
 
