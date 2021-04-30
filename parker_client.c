@@ -59,7 +59,7 @@ void clientHandleSelection(int selection, void *client)
 
 
         //==============================
-        //     Make Ticket Inquiry
+        //      Ticket Inquiry
         //==============================
         else if (selection == 2)
         {
@@ -68,16 +68,37 @@ void clientHandleSelection(int selection, void *client)
 
 
         //==============================
-        //   Make Ticket Modification
+        //    Ticket Modification
         //==============================
         else if (selection == 3)
         {
             printf("\nPlease enter a ticket number to modify: ");
 
+            // gets ticket number and sends to server
             int ticket_num;
             scanf("%d", &ticket_num);
-
             send(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            // receives server modification message
+            // char modification_message[512];
+            // recv(client_socket, modification_message, sizeof(modification_message), 0);
+
+            // printf("%s", modification_message);
+
+            // struct Customer modified_cust;
+            // struct Customer *modified_cust_ptr = &modified_cust;
+
+            // modified_cust = reserveInformationFromUser();
+
+            // strcpy(modified_cust.name, "ChangedName");
+            // modified_cust.dob = 123456;
+            // modified_cust.gender = 'F';
+            // modified_cust.govt_id = 1234;
+            // modified_cust.travel_date = 123456;
+            // modified_cust.num_traveler = 1;
+            // modified_cust.seats[0] = 1;
+
+            send(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
 
             printf("Modification completed. You will now be brought back to the main menu.\n\n\n");
 
@@ -88,7 +109,7 @@ void clientHandleSelection(int selection, void *client)
 
 
         //==============================
-        //   Make Ticket Cancellation
+        //    Ticket Cancellation
         //==============================
         else if (selection == 4)
         {
