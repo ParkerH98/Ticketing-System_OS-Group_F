@@ -80,23 +80,36 @@ void clientHandleSelection(int selection, void *client)
             send(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
             // receives server modification message
-            // char modification_message[512];
-            // recv(client_socket, modification_message, sizeof(modification_message), 0);
+            char modification_message[512];
+            recv(client_socket, modification_message, sizeof(modification_message), 0);
 
-            // printf("%s", modification_message);
+            printf("%s", modification_message);
 
-            // struct Customer modified_cust;
-            // struct Customer *modified_cust_ptr = &modified_cust;
+            struct Customer modified_cust;
+            struct Customer *modified_cust_ptr = &modified_cust;
 
-            // modified_cust = reserveInformationFromUser();
+            printf("Please enter your credentials as prompted.\n\n");
+            printf("Number of Travelers: ");
+            scanf("%d", &modified_cust.num_traveler);
 
-            // strcpy(modified_cust.name, "ChangedName");
-            // modified_cust.dob = 123456;
-            // modified_cust.gender = 'F';
-            // modified_cust.govt_id = 1234;
-            // modified_cust.travel_date = 123456;
-            // modified_cust.num_traveler = 1;
-            // modified_cust.seats[0] = 1;
+            // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
+            for (int i = 0; i < NUM_SEATS; i++)
+            {
+                modified_cust.seats[i] = 0;
+            }
+
+            printf("Enter your desired seats to reserve:\n");
+
+            // sets the desired customer's seats' indices to be 1
+            for (int i = 0; i < a.num_traveler; i++)
+            {
+                printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
+                int temp;
+                scanf("%d", &temp);
+                a.seats[temp - 1] = 1;
+            }
+
+
 
             send(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
 

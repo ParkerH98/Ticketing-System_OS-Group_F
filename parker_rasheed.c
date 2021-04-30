@@ -83,9 +83,9 @@ struct Customer inquireTicket(int ticket, int client_socket) //file demo
     return a;
 }
 
-void modify(struct Customer a, int client_socket)
+void modify(int ticket, int client_socket)
 {
-    int ticket = a.receipt_id;
+    // int ticket = a.receipt_id;
     char filename[32];
     char temp[10];
 
@@ -102,16 +102,16 @@ void modify(struct Customer a, int client_socket)
         sprintf(modification_message, "Found ticket [%d] in our database.\nModifying ticket. Please enter the information below.\n", ticket);
         send(client_socket, modification_message, sizeof(modification_message), 0);
 
-        // struct Customer a;
-        // a = reserveInformationFromUser();
-      
-
         ticket = ticket + 1000;
         a.receipt_id = ticket;
 
-        struct Customer *a_ptr;
-        a_ptr = &a;
-        reserveSeats(a_ptr, client_socket);
+        // receives modified customer struct from the client
+        struct Customer modified_cust;
+        struct Customer *modified_cust_ptr = &modified_cust;
+        recv(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
+
+     
+        reserveSeats(modified_cust_ptr, client_socket);
 
         remove(filename);
     }
