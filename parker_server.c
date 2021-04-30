@@ -84,12 +84,9 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 4)
         {
-
-            printf("EXCUTED NOW\n");
             int ticket_num;
 
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
-            printf("EXCUTED later\n");
 
             printf("Ticket number received: %d\n", ticket_num);
 

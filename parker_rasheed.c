@@ -88,7 +88,7 @@ struct Customer inquireTicket(int ticket) //file demo
 void modify(int ticket)
 {
     char filename[11];
-    char temp[4];
+    char temp[10];
 
     sprintf(temp, "%d", ticket);
     strcpy(filename, temp);
@@ -119,15 +119,28 @@ void modify(int ticket)
 
 void cancellation(int *ticket_ptr)
 {
+
+    printf("CANCELLATION ticket: %d\n", *ticket_ptr);
     int ticket = *ticket_ptr;
     char filename[11];
-    char temp[4];
+    char temp[10];
+    printf("executed0\n");
 
     sprintf(temp, "%d", ticket);
+
+    printf("executed00\n");
+
     strcpy(filename, temp);
+
+    printf("executed000\n");
+
     strcat(filename, "_r.txt");
 
+    printf("executed1\n");
+
     printf("%s\n", filename);
+
+    printf("executed2\n");
 
     if (fopen(filename, "r"))
     {
