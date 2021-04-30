@@ -47,4 +47,6 @@ sem_t *wrt;
 pthread_mutex_t mutex;
 static int read_count = 0;
 
+int receiptNum = 1001;
+
 #endif
