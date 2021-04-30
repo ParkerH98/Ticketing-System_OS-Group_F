@@ -68,7 +68,7 @@ void reserveSeats(struct Customer *customer, int client_socket)
     fp1 = fopen(Train, "r");
 
     char seats_now[31];
-    fscanf("%s", seats_now);
+    fscanf(fp1, "%s", seats_now);
 
     fclose(fp1);
 
@@ -208,7 +208,7 @@ struct Customer reserveInformationFromUser()
 {
     struct Customer a;
 
-    // printf("Please enter your credentials as prompted.\n\n");
+    printf("Please enter your credentials as prompted.\n\n");
     printf("Name: ");
     char Name[50];
     scanf(" %s", Name);
@@ -327,7 +327,7 @@ void printTrain(int day)
     for (int i = 0; i < 30; i++)
     {
         if (train_seats[i] == '0')
-            printf("%3d", i + 1);
+            printf("%d ", i + 1);
     }
     printf("\n");
 
