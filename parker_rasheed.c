@@ -83,8 +83,9 @@ struct Customer inquireTicket(int ticket, int client_socket) //file demo
     return a;
 }
 
-void modify(int ticket, int client_socket)
+void modify(struct Customer a, int client_socket)
 {
+    int ticket = a.receipt_id;
     char filename[32];
     char temp[10];
 
@@ -96,11 +97,14 @@ void modify(int ticket, int client_socket)
 
     if (fopen(filename, "r"))
     {
-        printf("Ticket FOUND %d\n", ticket);
-        printf("Modifying ticket. Please enter the information below. \n");
+        char modification_message[512];
 
-        struct Customer a;
-        a = reserveInformationFromUser();
+        sprintf(modification_message, "Found ticket [%d] in our database.\nModifying ticket. Please enter the information below.\n", ticket);
+        send(client_socket, modification_message, sizeof(modification_message), 0);
+
+        // struct Customer a;
+        // a = reserveInformationFromUser();
+      
 
         ticket = ticket + 1000;
         a.receipt_id = ticket;

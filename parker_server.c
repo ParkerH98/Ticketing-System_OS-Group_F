@@ -4,7 +4,7 @@ int *removeData();
 void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
-void modify(int ticket, int client_socket);
+void modify(struct Customer a, int client_socket);
 struct Customer reserveInformationFromUser();
 
 pthread_mutex_t mutex;
@@ -69,24 +69,19 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 3)
         {
-            // int ticket_num;
-
-            // recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
-
-            // printf("SERVER TICKt: %d\n", ticket_num);
-
-            // modify(ticket_num);
-
-            // recv(client_socket, &selection, sizeof(selection), 0);
-            // continue;
 
             int ticket_num;
-
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            
 
             printf("Ticket number received: %d\n", ticket_num);
 
-            modify(ticket_num, client_socket);
+            struct Customer modified_cust;
+            struct Customer *modified_cust_ptr = &modified_cust;
+            recv(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
+
+            modify(modified_cust, client_socket);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
