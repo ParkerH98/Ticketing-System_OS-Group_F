@@ -69,11 +69,24 @@ void serverHandleSelection(int selection, int client_socket)
         //==============================
         else if (selection == 3)
         {
-            int *ticket_num;
+            // int ticket_num;
 
-            recv(client_socket, ticket_num, sizeof(ticket_num), 0);
+            // recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
-            modify(*ticket_num);
+            // printf("SERVER TICKt: %d\n", ticket_num);
+
+            // modify(ticket_num);
+
+            // recv(client_socket, &selection, sizeof(selection), 0);
+            // continue;
+
+            int ticket_num;
+
+            recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            printf("Ticket number received: %d\n", ticket_num);
+
+            modify(ticket_num);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;

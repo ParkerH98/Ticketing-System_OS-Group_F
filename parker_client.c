@@ -46,8 +46,8 @@ void clientHandleSelection(int selection, void *client)
                 send(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
                 printf("Reservation completed. You will now be brought back to the main menu.\n\n\n");
-                promptMenu(&selection);
 
+                promptMenu(&selection);
                 send(client_socket, &selection, sizeof(selection), 0);
                 continue;
             }
@@ -76,18 +76,14 @@ void clientHandleSelection(int selection, void *client)
         {
             printf("\nPlease enter a ticket number to modify: ");
 
-            int *ticket_num;
-            scanf("%d", ticket_num);
+            int ticket_num;
+            scanf("%d", &ticket_num);
 
-            printf("EXECUTED1\n");
-
-            send(client_socket, ticket_num, sizeof(ticket_num), 0);
-
-            printf("EXECUTED2\n");
+            send(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
             printf("Modification completed. You will now be brought back to the main menu.\n\n\n");
-            promptMenu(&selection);
 
+            promptMenu(&selection);
             send(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
@@ -109,6 +105,7 @@ void clientHandleSelection(int selection, void *client)
             printf("EXECUTED2\n");
 
             printf("Cancellation completed. You will now be brought back to the main menu.\n\n\n");
+
             promptMenu(&selection);
             send(client_socket, &selection, sizeof(selection), 0);
             continue;
