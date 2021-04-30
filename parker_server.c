@@ -49,7 +49,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             reserveSeats(customer_ptr);
 
-            recv(client_socket, selection, sizeof(selection), 0);
+            recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
@@ -60,7 +60,7 @@ void serverHandleSelection(int selection, int client_socket)
         {
             // inquiry();
 
-            recv(client_socket, selection, sizeof(selection), 0);
+            recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
@@ -75,7 +75,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             modify(*ticket_num);
 
-            recv(client_socket, selection, sizeof(selection), 0);
+            recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
@@ -95,7 +95,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             cancellation(&ticket_num);
 
-            recv(client_socket, selection, sizeof(selection), 0);
+            recv(client_socket, &selection, sizeof(selection), 0);
             continue;
         }
 
