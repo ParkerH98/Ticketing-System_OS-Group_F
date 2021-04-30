@@ -212,13 +212,16 @@ void cancellation(int *ticket_ptr, int client_socket)
         char seats_now[31];
         fscanf(fp1, "%s", seats_now);
 
+        printf("SEAT: %s\n", seats_now);
+
         fclose(fp1);
 
+      
 
         fp1 = fopen(Train, "w");
         for(int i=0; i<30; i++)
         {
-            if( _seats[i] ) seats_now[i] = '0';
+            if(_seats[i] == '1') seats_now[i] = '0';
         }
 
         fprintf(fp1, "%s", seats_now);
