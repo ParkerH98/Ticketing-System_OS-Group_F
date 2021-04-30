@@ -125,7 +125,7 @@ void cancellation(int *ticket_ptr)
     strcpy(filename, temp);
     strcat(filename, "_r.txt");
 
-    //printf("%s\n", filename);
+    printf("%s\n", filename);
 
     if (fopen(filename, "r"))
     {
