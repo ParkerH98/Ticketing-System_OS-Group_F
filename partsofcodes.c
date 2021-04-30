@@ -17,28 +17,25 @@ void searchticket( int ticket ) // still working
 
     if( fopen(filename, "r") )
     {
-        printf("Ticket FOUND %d\n", ticket);
+        printf("Ticket number %d has been found.\n", ticket);
 
         FILE *fp1;
         fp1 = fopen(filename, "r");
 
         char temp[50];
-        fscanf(fp1, "%[^\n]", temp);
-        printf("%s\n", temp);
+        int temp2, temp3, temp4;
+        char temp5[35];
+        fscanf(fp1, "%[^\n]%d%d%d%s", temp, &temp2, &temp3, &temp4, temp5);
+
+        printf("Name: %s\n", temp);
+        printf("Date of Birth: %d\n", temp2);
+        printf("Govt. ID: %d\n", temp3);
+        printf("Number of seats: %d\n", temp4);
         
-        char temp[50];
-        fscanf(fp1, "%[^\n]", temp);
-        printf("%s\n", temp);
-
-        char temp[50];
-        fscanf(fp1, "%[^\n]", temp);
-        printf("%s\n", temp);
-
-        char temp[50];
-        fscanf(fp1, "%[^\n]", temp);
-        printf("%s\n", temp);
-
-        printf("===========");
+        for(int i = 0; i<31; i++)
+        {
+            if( temp5[i] == '1') printf("%d ", i); 
+        }
 
         fclose(fp1);
 
