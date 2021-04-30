@@ -61,6 +61,8 @@ void reserveSeats(struct Customer *customer)
     sem_post(wrt);
 }
 
+//trdt
+
 struct Customer inquireTicket(int ticket) //file demo
 {
     struct Customer a;
