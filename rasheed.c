@@ -52,6 +52,35 @@ void reserveSeats(struct Customer *customer, int client_socket)
     }
     fprintf(fp2, "\n");
 
+
+
+    FILE *fp1;
+
+    char Train[32];
+    char temp[10];
+
+    sprintf(temp, "%d", a.travel_date);
+
+    strcpy(Train, "train_day");
+    strcat(Train, temp);
+    strcat(Train, ".txt");
+
+    fp1 = fopen(Train, "r");
+
+    char seats_now[31];
+    fscanf("%s", seats_now);
+
+    fclose(fp1);
+
+    fp1 = fopen(Train, "w");
+    for(int i=0; i<30; i++)
+    {
+        if( a.seats[i] ) seats_now[i] = '1';
+    }
+
+    fprintf(fp1, "%s", seats_now);
+
+    fclose(fp1);
     fclose(fp2);
 
     sem_post(wrt);
