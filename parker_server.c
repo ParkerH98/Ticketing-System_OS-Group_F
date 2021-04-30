@@ -113,7 +113,17 @@ void serverHandleSelection(int selection, int client_socket)
     }
 }
 
+/*
+-------------------------------------------------------------
+This function is executed by threads that handle the client 
+conenctions. This function gets called in the waitForWork()
+once a connection has been placed into the queue. This function 
+sends the menu to the client and then calls serverHandleSelection()
+to handle the user's menu selection.
 
+@param void * referenceing the client socket connection
+@return: void * because it's a thread function
+*/
 void *handleConnection(void *client)
 {
     // justs casts the input pointer socket to an integer
@@ -129,8 +139,8 @@ void *handleConnection(void *client)
     char selection[2];
     recv(client_socket, selection, sizeof(selection), 0);
 
-    printf("SERVER: Selection [%s] was chosen by the customer.\n\n", selection);
-    fflush(stdout);
+    // printf("SERVER: Selection [%s] was chosen by the customer.\n\n", selection);
+    // fflush(stdout);
 
     // function handles the client's menu selection (reserve, inquire, modify, cancel, & exit)
     serverHandleSelection(atoi(selection), client_socket);
