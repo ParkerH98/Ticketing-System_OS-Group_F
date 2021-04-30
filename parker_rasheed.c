@@ -90,9 +90,21 @@ void modify(int ticket)
     char filename[11];
     char temp[10];
 
+    printf("This shit works 00\n");
+
     sprintf(temp, "%d", ticket);
+
+    printf("This shit works 01\n");
     strcpy(filename, temp);
+
+    printf("This shit works 02\n");
     strcat(filename, "_r.txt");
+
+    printf("This shit works 03\n");
+
+    printf("%s\n", filename);
+
+    printf("This shit works 04\n");
 
     if (fopen(filename, "r"))
     {
@@ -115,7 +127,7 @@ void modify(int ticket)
     {
         printf("Ticket not found.\n");
     }
-};
+}
 
 void cancellation(int *ticket_ptr)
 {
