@@ -300,28 +300,28 @@ struct Customer reserveInformationFromUser()
     struct Customer a;
 
     printf("Please enter your credentials as prompted.\n\n");
-    printf("Name: ");
-    char Name[50];
-    scanf(" %s", Name);
-    strcpy(a.name , Name);
-    printf("Date of Birth(YYYYMMDD): ");
-    scanf("%d", &a.dob);
-    printf("Gender (M or F): ");
-    scanf(" %c", &a.gender);
-    printf("Government ID: ");
-    scanf("%d", &a.govt_id);
-    printf("Available dates of travel: 1 or 2.\nSelect One: ");
-    scanf("%d", &a.travel_date);
+    // printf("Name: ");
+    // char Name[50];
+    // scanf(" %s", Name);
+    // strcpy(a.name , Name);
+    // printf("Date of Birth(YYYYMMDD): ");
+    // scanf("%d", &a.dob);
+    // printf("Gender (M or F): ");
+    // scanf(" %c", &a.gender);
+    // printf("Government ID: ");
+    // scanf("%d", &a.govt_id);
+    // printf("Available dates of travel: 1 or 2.\nSelect One: ");
+    // scanf("%d", &a.travel_date);
     printf("Number of Travelers: ");
     scanf("%d", &a.num_traveler);
 
     // automated for testing
-    // strcpy(a.name, "Parker");
-    // a.dob = 19980418;
-    // a.gender = 'M';
-    // a.govt_id = 56441;
-    // a.receipt_id = 45259;
-    // a.travel_date = 20210419;
+    strcpy(a.name, "Parker");
+    a.dob = 19980418;
+    a.gender = 'M';
+    a.govt_id = 56441;
+    a.receipt_id = 45259;
+    a.travel_date = 1;
     // a.num_traveler = 1;
 
     // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
