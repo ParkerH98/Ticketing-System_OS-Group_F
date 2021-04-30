@@ -4,7 +4,7 @@ int *removeData();
 void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
-void modify(struct Customer a, int client_socket);
+void modify(int ticket, int client_socket);
 struct Customer reserveInformationFromUser();
 
 pthread_mutex_t mutex;
@@ -28,7 +28,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             printf("Order Received:\n");
             printf("ID: %d\n", customer.receipt_id);
-            printf("Name: %s\n", customer_ptr->name);
+            printf("Name: %s\n", customer.name);
             printf("DOB: %d\n", customer.dob);
             printf("Gender: %c\n", customer.gender);
             printf("Government ID: %d\n", customer.govt_id);

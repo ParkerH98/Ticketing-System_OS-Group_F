@@ -9,10 +9,15 @@ struct Customer initializeCust();
 
 void reserveSeats(struct Customer *customer, int client_socket)
 {
+
+
     struct Customer a;
     a = *customer;
     // gives lock to writer
     sem_wait(wrt);
+
+    // correct value at this point
+    // printf("Receipt Num: %d\n", a.receipt_id);
 
     // BEGINNING CRITICAL SECTION
 
@@ -25,8 +30,8 @@ void reserveSeats(struct Customer *customer, int client_socket)
         receipt_num++;
     }
 
-    printf("Rceipt_id: %d\n", a.receipt_id);
-    printf("Receipt_num: %d\n", receipt_num);
+    // printf("Rceipt_id: %d\n", a.receipt_id);
+    // printf("Receipt_num: %d\n", receipt_num);
 
     int x = a.receipt_id;
 
@@ -102,15 +107,21 @@ void modify(int ticket, int client_socket)
         sprintf(modification_message, "Found ticket [%d] in our database.\nModifying ticket. Please enter the information below.\n", ticket);
         send(client_socket, modification_message, sizeof(modification_message), 0);
 
-        ticket = ticket + 1000;
-        a.receipt_id = ticket;
-
-        // receives modified customer struct from the client
         struct Customer modified_cust;
         struct Customer *modified_cust_ptr = &modified_cust;
-        recv(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
 
      
+
+
+
+        // receives modified customer struct from the client
+        recv(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
+
+        ticket = ticket + 1000;
+        modified_cust.receipt_id = ticket;
+
+        printf("NUMBER: %d\n", modified_cust_ptr->receipt_id);
+
         reserveSeats(modified_cust_ptr, client_socket);
 
         remove(filename);
@@ -182,7 +193,7 @@ struct Customer reserveInformationFromUser()
     a.dob = 19980418;
     a.gender = 'M';
     a.govt_id = 56441;
-    a.receipt_id = 45259;
+    // a.receipt_id = 45259;
     a.travel_date = 20210419;
     a.num_traveler = 1;
 

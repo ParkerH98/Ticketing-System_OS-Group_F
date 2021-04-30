@@ -101,15 +101,35 @@ void clientHandleSelection(int selection, void *client)
             printf("Enter your desired seats to reserve:\n");
 
             // sets the desired customer's seats' indices to be 1
-            for (int i = 0; i < a.num_traveler; i++)
+            for (int i = 0; i < modified_cust.num_traveler; i++)
             {
-                printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
+                printf("Choose seat for ticket %d/%d: ", i + 1, modified_cust.num_traveler);
                 int temp;
                 scanf("%d", &temp);
-                a.seats[temp - 1] = 1;
+                modified_cust.seats[temp - 1] = 1;
             }
 
+            strcpy(modified_cust.name, "Parker");
+            modified_cust.dob = 19980418;
+            modified_cust.gender = 'M';
+            modified_cust.govt_id = 56441;
+            modified_cust.travel_date = 20210419;
+            modified_cust.receipt_id = ticket_num;
 
+            printf("Modified Customer:\n");
+            printf("ID: %d\n", modified_cust.receipt_id);
+            printf("Name: %s\n", modified_cust.name);
+            printf("DOB: %d\n", modified_cust.dob);
+            printf("Gender: %c\n", modified_cust.gender);
+            printf("Government ID: %d\n", modified_cust.govt_id);
+            printf("Travel Date: %d\n", modified_cust.travel_date);
+            printf("Number of Travelers: %d\n", modified_cust.num_traveler);
+            printf("Seats Chosen: \n");
+            for (int i = 0; i < NUM_SEATS; i++)
+            {
+                printf("%d ", modified_cust.seats[i]);
+            }
+            printf("\n\n");
 
             send(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
 
