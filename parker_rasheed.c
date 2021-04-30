@@ -7,7 +7,7 @@
 
 struct Customer initializeCust();
 
-void reserveSeats(struct Customer *customer)
+void reserveSeats(struct Customer *customer, int client_socket)
 {
     struct Customer a;
     a = *customer;
@@ -61,9 +61,7 @@ void reserveSeats(struct Customer *customer)
     sem_post(wrt);
 }
 
-//trdt
-
-struct Customer inquireTicket(int ticket) //file demo
+struct Customer inquireTicket(int ticket, int client_socket) //file demo
 {
     struct Customer a;
     a = initializeCust();
@@ -85,7 +83,7 @@ struct Customer inquireTicket(int ticket) //file demo
     return a;
 }
 
-void modify(int ticket)
+void modify(int ticket, int client_socket)
 {
     char filename[32];
     char temp[10];
@@ -109,7 +107,7 @@ void modify(int ticket)
 
         struct Customer *a_ptr;
         a_ptr = &a;
-        reserveSeats(a_ptr);
+        reserveSeats(a_ptr, client_socket);
 
         remove(filename);
     }
@@ -119,39 +117,35 @@ void modify(int ticket)
     }
 }
 
-void cancellation(int *ticket_ptr)
+void cancellation(int *ticket_ptr, int client_socket)
 {
-
-    printf("CANCELLATION ticket: %d\n", *ticket_ptr);
     int ticket = *ticket_ptr;
     char filename[11];
     char temp[10];
-    printf("executed0\n");
 
     sprintf(temp, "%d", ticket);
-
-    printf("executed00\n");
-
     strcpy(filename, temp);
-
-    printf("executed000\n");
-
     strcat(filename, "_r.txt");
-
-    printf("executed1\n");
 
     printf("%s\n", filename);
 
-    printf("executed2\n");
-
     if (fopen(filename, "r"))
     {
-        printf("Ticket FOUND %d\n", ticket);
-        printf("Are you sure you want to cancel the reservation? Y/N\n");
-        char ans;
-        scanf(" %c", &ans);
-        printf("Reservation for ticket %d is cancelled.\n", ticket);
-        remove(filename);
+        char confirmation_msg[1024];
+        sprintf(confirmation_msg, "Ticket [%d] was found.\nAre you sure you want to cancel the reservation (Y or N)?\n", ticket);
+
+        // sends confirmation message to the client
+        send(client_socket, confirmation_msg, sizeof(confirmation_msg), 0);
+
+        // receives cancellation confirmation answer from client
+        char answer[2];
+        recv(client_socket, answer, sizeof(answer), 0);
+
+        if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
+        {
+            printf("Reservation for ticket %d is cancelled.\n", ticket);
+            remove(filename);
+        }
     }
     else
     {

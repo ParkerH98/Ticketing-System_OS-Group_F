@@ -2,9 +2,9 @@
 
 int *removeData();
 void insertConnection(int *data);
-void cancellation(int *ticket);
-void reserveSeats(struct Customer *customer);
-void modify(int ticket);
+void cancellation(int *ticket_ptr, int client_socket);
+void reserveSeats(struct Customer *customer, int client_socket);
+void modify(int ticket, int client_socket);
 struct Customer reserveInformationFromUser();
 
 pthread_mutex_t mutex;
@@ -47,7 +47,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             // funcion handles the file operations necessary to reserve seats
 
-            reserveSeats(customer_ptr);
+            reserveSeats(customer_ptr, client_socket);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
@@ -86,7 +86,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             printf("Ticket number received: %d\n", ticket_num);
 
-            modify(ticket_num);
+            modify(ticket_num, client_socket);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;
@@ -103,7 +103,7 @@ void serverHandleSelection(int selection, int client_socket)
 
             printf("Ticket number received: %d\n", ticket_num);
 
-            cancellation(&ticket_num);
+            cancellation(&ticket_num, client_socket);
 
             recv(client_socket, &selection, sizeof(selection), 0);
             continue;

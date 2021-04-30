@@ -33,11 +33,11 @@
 
 struct Customer
 {
-    int receipt_id;         // receipt id
-    char name[CUST_NAME_LEN];  // name of the customer
-    int dob;        // date of birth
-    char gender;    // gender of the customer
-    int govt_id;    //government id
+    int receipt_id; // receipt id
+    char name[CUST_NAME_LEN]; // name of the customer
+    int dob; // date of birth
+    char gender; // gender of the customer
+    int govt_id; //government id
     int travel_date; //date they will travel. Format YYYYMMDD
     int num_traveler; // number of traveler
     int seats[NUM_SEATS]; //selected seats in the train

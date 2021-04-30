@@ -9,7 +9,6 @@ void clientHandleSelection(int selection, void *client)
 
     while(1)
     {
-
         //==============================
         //    Make Ticket Reservation
         //==============================
@@ -59,7 +58,6 @@ void clientHandleSelection(int selection, void *client)
         }
 
 
-            
         //==============================
         //     Make Ticket Inquiry
         //==============================
@@ -95,14 +93,26 @@ void clientHandleSelection(int selection, void *client)
         else if (selection == 4)
         {
             int ticket_num;
+            char confirmation_msg[1024];
+
             printf("\nWhat is your ticket number?\n");
             scanf("%d", &ticket_num);
 
-            printf("EXECUTED1\n");
-
+            // sends the ticket number to the server
             send(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
-            printf("EXECUTED2\n");
+            // receives cancellation confirmation message
+            recv(client_socket, confirmation_msg, sizeof(confirmation_msg), 0);
+
+            printf("%s", confirmation_msg);
+
+            char answer[2];
+            scanf("%s", answer);
+
+            if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
+            {
+                send(client_socket, answer, sizeof(answer), 0);
+            }
 
             printf("Cancellation completed. You will now be brought back to the main menu.\n\n\n");
 
