@@ -72,7 +72,7 @@ void insertConnection(int *data)
     printf("QUEUE: Count --> %d\n", count);
 }
 
-int *removeData()
+int *removeConnection()
 {
     if (count == 0)
     {

@@ -16,6 +16,8 @@
 #include <time.h> // time for random seed
 #include <semaphore.h> // semaphores
 #include <assert.h> // error checking
+#include <stdbool.h> // used in thomas.c
+
 
 
 // SERVER CONSTANTS

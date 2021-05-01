@@ -148,46 +148,46 @@ void modify(int ticket, int client_socket)
         send(client_socket, modification_message, sizeof(modification_message), 0);
 
 
-        FILE *fp1;
-        fp1 = fopen(filename, "r");
+        // FILE *fp1;
+        // fp1 = fopen(filename, "r");
 
-        char _name[50];
-        int _govt, _day, _traveler;
-        char _seats[35];
+        // char _name[50];
+        // int _govt, _day, _traveler;
+        // char _seats[35];
 
-        fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
-        fclose(fp1);
-
-
-        char Train[32];
-        char Day[5];
-        sprintf(Day, "%d", _day);
+        // fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
+        // fclose(fp1);
 
 
-        strcpy(Train, "train_day");
-        strcat(Train, Day);
-        strcat(Train, ".txt");
+        // char Train[32];
+        // char Day[5];
+        // sprintf(Day, "%d", _day);
 
-        fp1 = fopen(Train, "r");
+
+        // strcpy(Train, "train_day");
+        // strcat(Train, Day);
+        // strcat(Train, ".txt");
+
+        // fp1 = fopen(Train, "r");
         
-        char seats_now[31];
-        fscanf(fp1, "%s", seats_now);
+        // char seats_now[31];
+        // fscanf(fp1, "%s", seats_now);
 
-        printf("SEAT: %s\n", seats_now);
+        // printf("SEAT: %s\n", seats_now);
 
-        fclose(fp1);
+        // fclose(fp1);
 
       
 
-        fp1 = fopen(Train, "w");
-        for(int i=0; i<30; i++)
-        {
-            if(_seats[i] == '1') seats_now[i] = '0';
-        }
+        // fp1 = fopen(Train, "w");
+        // for(int i=0; i<30; i++)
+        // {
+        //     if(_seats[i] == '1') seats_now[i] = '0';
+        // }
 
-        fprintf(fp1, "%s", seats_now);
+        // fprintf(fp1, "%s", seats_now);
 
-        fclose(fp1);
+        // fclose(fp1);
 
 
         /////////////////////////////////////////   

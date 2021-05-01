@@ -1,15 +1,19 @@
 #include "header.h"
 
-int *removeData();
+int *removeConnection();
 void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
 void modify(int ticket, int client_socket);
-struct Customer reserveInformationFromUser();
+// struct Customer reserveInformationFromUser();
 void inquiry(int ticket);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
+
+
+
+
 
 /*
 -------------------------------------------------------------
@@ -214,7 +218,7 @@ void * waitForWork(void *arg)
         pthread_cond_wait(&condition_thread, &mutex);
 
         // client socket is being set to the client_socket at the top of the queue
-        client_socket = removeData();
+        client_socket = removeConnection();
 
         // unlocks or "returns" the mutex to allow another thread to access the lock now that removal has finished
         pthread_mutex_unlock(&mutex);
