@@ -12,13 +12,6 @@ void reserveSeats(struct Customer *customer, int client_socket)
     struct Customer a;
     a = *customer;
 
-    // gives lock to writer
-    sem_wait(wrt);
-
-    // ======================================================
-    //              BEGINNING CRITICAL SECTION
-    // ======================================================
-
     if (!(a.receipt_id >= 2000 && a.receipt_id < 3000))
     {
         a.receipt_id = receipt_num;
@@ -36,6 +29,13 @@ void reserveSeats(struct Customer *customer, int client_socket)
     char receipt_filename[15];
     strcat(receipt_id_str, "_r.txt");
     strcpy(receipt_filename, receipt_id_str);
+
+    // ======================================================
+    //              BEGINNING CRITICAL SECTION
+    // ======================================================
+
+    // gives lock to writer
+    sem_wait(wrt);
 
     // opens file,  writes, and closes file 
     FILE *receipt_fp = fopen(receipt_filename, "w");
@@ -77,15 +77,26 @@ void reserveSeats(struct Customer *customer, int client_socket)
         if( a.seats[i] == 1 ) seats_now[i] = '1';
     }
     fprintf(train_fp, "%s", seats_now);
-    fclose(train_fp);
 
-    // writes gives up the lock
+    // closes file & writes gives up the lock
+    fclose(train_fp);
     sem_post(wrt);
 }
 
 
 void inquiry(int ticket) // still working
 {
+    // Reader acquire the lock before modifying read_count
+    pthread_mutex_lock(&mutex);
+    read_count++;
+
+    // If this is the first reader, then it will block the writer
+    if (read_count == 1)
+    {
+        sem_wait(wrt);
+    }
+    pthread_mutex_unlock(&mutex);
+
     char receipt_filename[32];
     char temp[10];
 
@@ -118,6 +129,17 @@ void inquiry(int ticket) // still working
         printf("\n");
 
         fclose(fp1);
+
+        // Reader acquire the lock before modifying read_count
+        pthread_mutex_lock(&mutex);
+        read_count--;
+
+        // if this is the last reader, it will signal the writer
+        if (read_count == 0)
+        {
+            sem_post(wrt);
+        }
+        pthread_mutex_unlock(&mutex);
     }
     else
     {
@@ -128,13 +150,6 @@ void inquiry(int ticket) // still working
 
 void modify(int ticket, int client_socket)
 {
-    // gives lock to writer
-    sem_wait(wrt);
-
-    // ======================================================
-    //              BEGINNING CRITICAL SECTION
-    // ======================================================
-
     // int ticket = a.receipt_id;
     char receipt_filename[32];
     char temp[10];
@@ -143,8 +158,12 @@ void modify(int ticket, int client_socket)
     strcpy(receipt_filename, temp);
     strcat(receipt_filename, "_r.txt");
 
-    printf("%s\n", receipt_filename);
+    // ======================================================
+    //              BEGINNING CRITICAL SECTION
+    // ======================================================
 
+    // gives lock to writer
+    sem_wait(wrt);
     if (fopen(receipt_filename, "r"))
     {
         char modification_message[512];
@@ -187,9 +206,8 @@ void modify(int ticket, int client_socket)
 
         fprintf(fp1, "%s", seats_now);
 
+        // closes file & writes gives up the lock
         fclose(fp1);
-
-        // writes gives up the lock
         sem_post(wrt);
 
         struct Customer modified_cust;
@@ -202,7 +220,6 @@ void modify(int ticket, int client_socket)
         modified_cust.receipt_id = ticket;
 
         reserveSeats(modified_cust_ptr, client_socket);
-
         remove(receipt_filename);
     }
     else
@@ -222,6 +239,13 @@ void cancellation(int *ticket_ptr, int client_socket)
     strcat(receipt_filename, "_r.txt");
 
     printf("%s\n", receipt_filename);
+
+    // ======================================================
+    //              BEGINNING CRITICAL SECTION
+    // ======================================================
+
+    // gives lock to writer
+    sem_wait(wrt);
 
     if (fopen(receipt_filename, "r"))
     {
@@ -251,8 +275,6 @@ void cancellation(int *ticket_ptr, int client_socket)
         char seats_now[31];
         fscanf(fp1, "%s", seats_now);
 
-        printf("SEAT: %s\n", seats_now);
-
         fclose(fp1);
 
         fp1 = fopen(train_filename, "w");
@@ -263,8 +285,10 @@ void cancellation(int *ticket_ptr, int client_socket)
 
         fprintf(fp1, "%s", seats_now);
 
+        // closes file & writes gives up the lock
         fclose(fp1);
-        
+        sem_post(wrt);
+
         // sends confirmation message to the client
         send(client_socket, confirmation_msg, sizeof(confirmation_msg), 0);
 
@@ -319,11 +343,11 @@ struct Customer getInformationFromUser()
         a.seats[i] = 0;
     }
 
-    // a.seats[4] = 1;
+    // a.seats[0] = 1;
 
-    printTrain(a.travel_date);
+    // printTrain(a.travel_date);
 
-    printf("Enter your desired seats to reserve:\n");
+    // printf("Enter your desired seats to reserve:\n");
 
     // sets the desired customer's seats' indices to be 1
     for (int i = 0; i < a.num_traveler; i++)
@@ -408,6 +432,8 @@ void printTrain(int day)
     {
         if (train_seats[i] == '0')
             printf("%d ", i + 1);
+        if (i % 10 == 0)
+            printf("\n");
     }
     printf("\n\n");
 

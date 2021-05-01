@@ -5,8 +5,11 @@ void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
 void modify(int ticket, int client_socket);
-// struct Customer getInformationFromUser();
 void inquiry(int ticket);
+void sortPriority();
+Priority removePriority();
+void insertPriority(Priority data);
+Priority customerPriority(Priority priority);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
@@ -42,25 +45,32 @@ void serverHandleSelection(int selection, int client_socket)
             // receives the Customer struct from the client
             recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
-            printf("Order Received:\n");
+            printf("\n\n\nOrder Received:\n");
             printf("Name: %s\n", customer.name);
             printf("DOB: %d\n", customer.dob);
             printf("Gender: %c\n", customer.gender);
             printf("Government ID: %d\n", customer.govt_id);
             printf("Travel Date: %d\n", customer.travel_date);
             printf("Number of Travelers: %d\n", customer.num_traveler);
-            printf("Seats Chosen: \n");
-            for (int i = 0; i < NUM_SEATS; i++)
+            printf("Seats Chosen: \n\n");
+            printf("===================");
+
+            for (int i = 0; i < NUM_SEATS - 1; i++)
             {
+                if (i % 10 == 0)
+                    printf("\n");
                 printf("%d ", customer.seats[i]);
             }
-            printf("\n\n");
+            printf("\n===================");
+            printf("\n\n"); 
 
-            // assertion to check a string and int
-            // assert(strcmp(customer.name, "Parker") == 0);
-            // assert(customer.dob == 19980418);
+            Priority thread_priority_attr;
+            thread_priority_attr.priority = customer.num_traveler;
+            thread_priority_attr.priority = client_socket;
 
-            reserveSeats(customer_ptr, client_socket);
+            thread_priority_attr = customerPriority(thread_priority_attr);
+
+            reserveSeats(customer_ptr, thread_priority_attr.client_socket);
 
             // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
@@ -151,7 +161,7 @@ void *handleConnection(void *client)
     printf("SERVER: Connected to client.\n");
 
     // sends the menu to the client
-    char menu[256] = "\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
+    char menu[256] = "\n\n\n\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
     send(client_socket, menu, sizeof(menu), 0);
 
     // receives the clients menu selection
@@ -300,3 +310,4 @@ void serverSocket_SendReceive(int port)
         pthread_mutex_unlock(&mutex);
     }
 }
+

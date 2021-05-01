@@ -7,7 +7,7 @@
 
 int main()
 {
-    int port = printRandoms(PORT, PORT + NUM_SERVERS - 1);
+    int port = randomPort(PORT, PORT + NUM_SERVERS - 1);
 
     clientSocket_SendReceive(port);
     return 0;

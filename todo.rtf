@@ -1,0 +1,31 @@
+TODO:
+
+SERVER
+    - Server can only serve one customer at a time
+    - implementation of summary file for receipts
+    - manage synchronization between servers
+    - customers waiting if a thread isn't available
+    - add server number to summary file
+    - send receipt to client after order is placed
+    - send message for ticket not found from the server
+    - check making multiple mutexs for each server queue
+    - cancel after yes 
+
+
+
+DONE:
+    - create TCP connection for client to connect to server --> Parker
+    - create TCP connection for clients to connect  --> Parker
+    - Server handles simultaneous connections  --> Parker
+    - Server is multithreaded  --> Parker
+    - Create N number of servers --> Parker
+    - create threadpool for threads --> Parker
+    - Server sends menu to client --> Parker
+    - manage synchronization between threads --> Parker
+    - create function to make reservation --> Rasheed
+    - create function to make inquiry --> Rasheed
+    - create function to modify reservation --> Rasheed
+    - create function to cancel reservation --> Rasheed
+    - handling priority when customers are making reservation --> Parker
+    - make sure process with lower priority will not starve --> Parker
+    - update train file when canceling --> Rasheed

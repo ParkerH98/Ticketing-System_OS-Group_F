@@ -20,8 +20,9 @@
 
 
 
+
 // SERVER CONSTANTS
-#define PORT 9020
+#define PORT 9030
 #define NUM_SERVERS 1
 #define BACKLOG 50
 #define THREAD_NUMBER 3
@@ -44,6 +45,14 @@ struct Customer
     int num_traveler; // number of traveler
     int seats[NUM_SEATS]; //selected seats in the train
 };
+
+typedef struct Priority_Struct
+{
+    int client_socket;
+    int priority;
+} Priority;
+
+extern Priority priorities[NUM_SERVERS * THREAD_NUMBER];
 
 sem_t *wrt;
 pthread_mutex_t mutex;

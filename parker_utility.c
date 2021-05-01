@@ -4,6 +4,8 @@
 // pthread_mutex_t mutex;
 // int read_count = 0;
 
+
+
 void writer()
 {
     sem_wait(wrt);
@@ -99,15 +101,84 @@ void printQueue()
     }
 }
 
-int printRandoms(int lower, int upper)
+int randomPort(int lower, int upper)
 {
-    // int i;
-    // for (i = 0; i < 10; i++)
-    // {
         srand(getpid());
         int num = (rand() % (upper - lower + 1)) + lower;
-        // printf("%d ", num);
-    // }
-
     return num;
+}
+
+
+Priority priorities[NUM_SERVERS * THREAD_NUMBER];
+int priority_head = 0;
+int priority_tail = -1;
+int priority_count = 0;
+
+Priority removePriority()
+{
+    if (priority_count == 0)
+    {
+        Priority p;
+        return p;
+    }
+
+    Priority *data = malloc(sizeof(Priority));
+    data = &priorities[priority_head++];
+
+    if (priority_head == QUEUE_SIZE)
+    {
+        priority_head = 0;
+    }
+
+    priority_count--;
+    return *data;
+}
+
+
+void insertPriority(Priority data)
+{
+    if (priority_count != QUEUE_SIZE)
+    {
+        if (priority_tail == QUEUE_SIZE - 1)
+        {
+            priority_tail = -1;
+        }
+
+        priorities[++priority_tail] = data;
+        priority_count++;
+    }
+    printf("QUEUE: Count --> %d\n", priority_count);
+}
+
+
+void sortPriority()
+{
+    for (int i = 0; i < (NUM_SERVERS * THREAD_NUMBER) - 1; i++)
+    {
+        for (int j = 0; j < (NUM_SERVERS * THREAD_NUMBER) - 1; j++)
+        {
+            if (priorities[j].priority < priorities[j + 1].priority)
+            {
+                Priority temp = priorities[j + 1];
+                priorities[j + 1] = priorities[j];
+                priorities[j] = temp;
+            }
+        }
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        (priorities->priority)++;
+    }
+}
+
+
+Priority customerPriority(Priority priority)
+{
+
+    insertPriority(priority);
+    sortPriority();
+    Priority highest_priority = removePriority();
+
+    return highest_priority;
 }
