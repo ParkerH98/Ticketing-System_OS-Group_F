@@ -102,11 +102,11 @@ void printQueue()
 int printRandoms(int lower, int upper)
 {
     // int i;
-    // for (i = 0; i < count; i++)
+    // for (i = 0; i < 10; i++)
     // {
-    srand(time(NULL));
-    int num = (rand() % (upper - lower + 1)) + lower;
-    printf("%d ", num);
+        srand(getpid());
+        int num = (rand() % (upper - lower + 1)) + lower;
+        // printf("%d ", num);
     // }
 
     return num;

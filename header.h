@@ -22,9 +22,9 @@
 
 // SERVER CONSTANTS
 #define PORT 9013
-#define NUM_SERVERS 2
+#define NUM_SERVERS 5
 #define BACKLOG 50
-#define THREAD_NUMBER 2
+#define THREAD_NUMBER 3
 
 #define QUEUE_SIZE 6
 

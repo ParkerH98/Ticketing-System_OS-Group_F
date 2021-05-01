@@ -1,4 +1,5 @@
 #include "parker_client.c"
+#include "parker_utility.c"
 #include "rasheed.c"
 
 // Usage Instructions:
@@ -6,8 +7,8 @@
 
 int main()
 {
-    // int port = printRandoms(PORT, PORT + 4);
+    int port = printRandoms(PORT, PORT + NUM_SERVERS - 1);
 
-    clientSocket_SendReceive(PORT);
+    clientSocket_SendReceive(port);
     return 0;
 }
