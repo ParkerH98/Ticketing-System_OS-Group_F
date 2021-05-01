@@ -5,7 +5,7 @@ void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
 void reserveSeats(struct Customer *customer, int client_socket);
 void modify(int ticket, int client_socket);
-// struct Customer reserveInformationFromUser();
+// struct Customer getInformationFromUser();
 void inquiry(int ticket);
 
 pthread_mutex_t mutex;

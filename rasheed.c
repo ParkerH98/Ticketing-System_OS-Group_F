@@ -15,10 +15,9 @@ void reserveSeats(struct Customer *customer, int client_socket)
     // gives lock to writer
     sem_wait(wrt);
 
-    // ==========================
-    // BEGINNING CRITICAL SECTION
-    // ==========================
-
+    // ======================================================
+    //              BEGINNING CRITICAL SECTION
+    // ======================================================
 
     if (!(a.receipt_id >= 2000 && a.receipt_id < 3000))
     {
@@ -26,81 +25,80 @@ void reserveSeats(struct Customer *customer, int client_socket)
         receipt_num++;
     }
 
-    int x = a.receipt_id;
+    // ==================
+    // RECEIPT OPERATIONS
+    // ==================
+    // saves receipt id into a string for appending
+    char receipt_id_str[20];
+    sprintf(receipt_id_str, "%d", a.receipt_id);
 
-    char str[20];
-    sprintf(str, "%d", x);
+    // creates file name and appends receipt id num
+    char receipt_filename[15];
+    strcat(receipt_id_str, "_r.txt");
+    strcpy(receipt_filename, receipt_id_str);
 
-    char filename[15];
-    strcat(str, "_r.txt");
-    // printf("%s\n", str);
-    strcpy(filename, str);
-    // printf("%s\n", filename);
-
-    FILE *fp2 = fopen(filename, "w");
-
-    //print the receipt information in the file
-
-    fprintf(fp2, "%s\n", a.name);
-    fprintf(fp2, "%d\n", a.govt_id);
-    fprintf(fp2, "%d\n", a.travel_date);
-
-    fprintf(fp2, "%d\n", a.num_traveler);
+    // opens file,  writes, and closes file 
+    FILE *receipt_fp = fopen(receipt_filename, "w");
+    fprintf(receipt_fp, "%s\n", a.name);
+    fprintf(receipt_fp, "%d\n", a.govt_id);
+    fprintf(receipt_fp, "%d\n", a.travel_date);
+    fprintf(receipt_fp, "%d\n", a.num_traveler);
     for (int i = 0; i < NUM_SEATS; i++)
     {
-        fprintf(fp2, "%d", a.seats[i]);
+        fprintf(receipt_fp, "%d", a.seats[i]);
     }
-    fprintf(fp2, "\n");
+    fprintf(receipt_fp, "\n");
+    fclose(receipt_fp);
 
+    // ====================
+    // TRAINFILE OPERATIONS
+    // ====================
+    char train_filename[32];
 
+    char travel_date_string[10];
+    sprintf(travel_date_string, "%d", a.travel_date);
 
-    FILE *fp1;
+    strcpy(train_filename, "train_day");
+    strcat(train_filename, travel_date_string);
+    strcat(train_filename, ".txt");
 
-    char Train[32];
-    char temp[10];
+    // opens, reads, and closes file
+    FILE *train_fp;
+    train_fp = fopen(train_filename, "r");
 
-    sprintf(temp, "%d", a.travel_date);
+    char seats_now[33];
+    fscanf(train_fp, "%s", seats_now);
+    fclose(train_fp);
 
-    strcpy(Train, "train_day");
-    strcat(Train, temp);
-    strcat(Train, ".txt");
-
-    fp1 = fopen(Train, "r");
-
-    char seats_now[31];
-    fscanf(fp1, "%s", seats_now);
-
-    fclose(fp1);
-
-    fp1 = fopen(Train, "w");
+    // opens, writes, and closes file
+    train_fp = fopen(train_filename, "w");
     for(int i=0; i<30; i++)
     {
-        if( a.seats[i] ) seats_now[i] = '1';
+        if( a.seats[i] == 1 ) seats_now[i] = '1';
     }
+    fprintf(train_fp, "%s", seats_now);
+    fclose(train_fp);
 
-    fprintf(fp1, "%s", seats_now);
-
-    fclose(fp1);
-    fclose(fp2);
-
+    // writes gives up the lock
     sem_post(wrt);
 }
 
+
 void inquiry(int ticket) // still working
 {
-    char filename[32];
+    char receipt_filename[32];
     char temp[10];
 
     sprintf(temp, "%d", ticket);
-    strcpy(filename, temp);
-    strcat(filename, "_r.txt");
+    strcpy(receipt_filename, temp);
+    strcat(receipt_filename, "_r.txt");
 
-    if (fopen(filename, "r"))
+    if (fopen(receipt_filename, "r"))
     {
         printf("Ticket number %d has been found.\n", ticket);
 
         FILE *fp1;
-        fp1 = fopen(filename, "r");
+        fp1 = fopen(receipt_filename, "r");
 
         char temp[50];
         int temp2, temp3, temp4;
@@ -130,68 +128,69 @@ void inquiry(int ticket) // still working
 
 void modify(int ticket, int client_socket)
 {
+    // gives lock to writer
+    sem_wait(wrt);
+
+    // ======================================================
+    //              BEGINNING CRITICAL SECTION
+    // ======================================================
+
     // int ticket = a.receipt_id;
-    char filename[32];
+    char receipt_filename[32];
     char temp[10];
 
     sprintf(temp, "%d", ticket);
-    strcpy(filename, temp);
-    strcat(filename, "_r.txt");
+    strcpy(receipt_filename, temp);
+    strcat(receipt_filename, "_r.txt");
 
-    printf("%s\n", filename);
+    printf("%s\n", receipt_filename);
 
-    if (fopen(filename, "r"))
+    if (fopen(receipt_filename, "r"))
     {
         char modification_message[512];
 
         sprintf(modification_message, "Found ticket [%d] in our database.\nModifying ticket. Please enter the information below.\n", ticket);
         send(client_socket, modification_message, sizeof(modification_message), 0);
 
+        FILE *fp1;
+        fp1 = fopen(receipt_filename, "r");
 
-        // FILE *fp1;
-        // fp1 = fopen(filename, "r");
+        char _name[50];
+        int _govt, _day, _traveler;
+        char _seats[35];
 
-        // char _name[50];
-        // int _govt, _day, _traveler;
-        // char _seats[35];
+        fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
+        fclose(fp1);
 
-        // fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
-        // fclose(fp1);
+        char train_filename[32];
+        char Day[5];
+        sprintf(Day, "%d", _day);
 
+        strcpy(train_filename, "train_day");
+        strcat(train_filename, Day);
+        strcat(train_filename, ".txt");
 
-        // char Train[32];
-        // char Day[5];
-        // sprintf(Day, "%d", _day);
-
-
-        // strcpy(Train, "train_day");
-        // strcat(Train, Day);
-        // strcat(Train, ".txt");
-
-        // fp1 = fopen(Train, "r");
+        fp1 = fopen(train_filename, "r");
         
-        // char seats_now[31];
-        // fscanf(fp1, "%s", seats_now);
+        char seats_now[31];
+        fscanf(fp1, "%s", seats_now);
 
-        // printf("SEAT: %s\n", seats_now);
+        printf("SEAT: %s\n", seats_now);
 
-        // fclose(fp1);
+        fclose(fp1);
 
-      
+        fp1 = fopen(train_filename, "w");
+        for(int i=0; i<30; i++)
+        {
+            if(_seats[i] == '1') seats_now[i] = '0';
+        }
 
-        // fp1 = fopen(Train, "w");
-        // for(int i=0; i<30; i++)
-        // {
-        //     if(_seats[i] == '1') seats_now[i] = '0';
-        // }
+        fprintf(fp1, "%s", seats_now);
 
-        // fprintf(fp1, "%s", seats_now);
+        fclose(fp1);
 
-        // fclose(fp1);
-
-
-        /////////////////////////////////////////   
-
+        // writes gives up the lock
+        sem_post(wrt);
 
         struct Customer modified_cust;
         struct Customer *modified_cust_ptr = &modified_cust;
@@ -202,11 +201,9 @@ void modify(int ticket, int client_socket)
         ticket = ticket + 1000;
         modified_cust.receipt_id = ticket;
 
-        printf("NUMBER: %d\n", modified_cust_ptr->receipt_id);
-
         reserveSeats(modified_cust_ptr, client_socket);
 
-        remove(filename);
+        remove(receipt_filename);
     }
     else
     {
@@ -217,24 +214,22 @@ void modify(int ticket, int client_socket)
 void cancellation(int *ticket_ptr, int client_socket)
 {
     int ticket = *ticket_ptr;
-    char filename[11];
+    char receipt_filename[11];
     char temp[10];
-//////////////////////////////////////////
+
     sprintf(temp, "%d", ticket);
-    strcpy(filename, temp);
-    strcat(filename, "_r.txt");
+    strcpy(receipt_filename, temp);
+    strcat(receipt_filename, "_r.txt");
 
-    printf("%s\n", filename);
+    printf("%s\n", receipt_filename);
 
-    if (fopen(filename, "r"))
+    if (fopen(receipt_filename, "r"))
     {
         char confirmation_msg[1024];
         sprintf(confirmation_msg, "Ticket [%d] was found.\nAre you sure you want to cancel the reservation (Y or N)?\n", ticket);
 
-
-        
         FILE *fp1;
-        fp1 = fopen(filename, "r");
+        fp1 = fopen(receipt_filename, "r");
 
         char _name[50];
         int _govt, _day, _traveler;
@@ -243,17 +238,15 @@ void cancellation(int *ticket_ptr, int client_socket)
         fscanf(fp1, "%[^\n]%d%d%d%s", _name, &_govt, &_day, &_traveler, _seats);
         fclose(fp1);
 
-
-        char Train[32];
+        char train_filename[32];
         char Day[5];
         sprintf(Day, "%d", _day);
 
+        strcpy(train_filename, "train_day");
+        strcat(train_filename, Day);
+        strcat(train_filename, ".txt");
 
-        strcpy(Train, "train_day");
-        strcat(Train, Day);
-        strcat(Train, ".txt");
-
-        fp1 = fopen(Train, "r");
+        fp1 = fopen(train_filename, "r");
         
         char seats_now[31];
         fscanf(fp1, "%s", seats_now);
@@ -262,9 +255,7 @@ void cancellation(int *ticket_ptr, int client_socket)
 
         fclose(fp1);
 
-      
-
-        fp1 = fopen(Train, "w");
+        fp1 = fopen(train_filename, "w");
         for(int i=0; i<30; i++)
         {
             if(_seats[i] == '1') seats_now[i] = '0';
@@ -274,8 +265,6 @@ void cancellation(int *ticket_ptr, int client_socket)
 
         fclose(fp1);
         
-/////////////////////////////////////////////////////
-
         // sends confirmation message to the client
         send(client_socket, confirmation_msg, sizeof(confirmation_msg), 0);
 
@@ -286,7 +275,7 @@ void cancellation(int *ticket_ptr, int client_socket)
         if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
         {
             printf("Reservation for ticket %d is cancelled.\n", ticket);
-            remove(filename);
+            remove(receipt_filename);
         }
     }
     else
@@ -295,7 +284,7 @@ void cancellation(int *ticket_ptr, int client_socket)
     }
 }
 
-struct Customer reserveInformationFromUser()
+struct Customer getInformationFromUser()
 {
     struct Customer a;
 
@@ -334,7 +323,7 @@ struct Customer reserveInformationFromUser()
 
     printTrain(a.travel_date);
 
-    // printf("Enter your desired seats to reserve:\n");
+    printf("Enter your desired seats to reserve:\n");
 
     // sets the desired customer's seats' indices to be 1
     for (int i = 0; i < a.num_traveler; i++)
@@ -389,19 +378,19 @@ struct Customer printReceipt(struct Customer a, int choice)
 
 void printTrain(int day)
 {
-    char Train[32];
+    char train_filename[32];
     char temp[10];
 
     sprintf(temp, "%d", day);
 
-    strcpy(Train, "train_day");
-    strcat(Train, temp);
-    strcat(Train, ".txt");
+    strcpy(train_filename, "train_day");
+    strcat(train_filename, temp);
+    strcat(train_filename, ".txt");
 
-    printf("%s\n", Train);
+    printf("%s\n", train_filename);
 
     FILE *fp1;
-    fp1 = fopen(Train, "r");
+    fp1 = fopen(train_filename, "r");
 
     printf("Your desired train to Hogwarts seats' are shown below:\n");
     for (int i = 1; i < 31; i++)
@@ -420,7 +409,7 @@ void printTrain(int day)
         if (train_seats[i] == '0')
             printf("%d ", i + 1);
     }
-    printf("\n");
+    printf("\n\n");
 
     fclose(fp1);
 }

@@ -1,6 +1,6 @@
 #include "header.h"
 
-struct Customer reserveInformationFromUser();
+struct Customer getInformationFromUser();
 void promptMenu(int *selection);
 
 /*
@@ -26,7 +26,7 @@ void clientHandleSelection(int selection, void *client)
             struct Customer customer;
             struct Customer *customer_ptr = &customer;
 
-            customer = reserveInformationFromUser();
+            customer = getInformationFromUser();
 
             printf("Order Preview:\n");
             printf("ID: %d\n", customer.receipt_id);
@@ -131,7 +131,7 @@ void clientHandleSelection(int selection, void *client)
             modified_cust.dob = 19980418;
             modified_cust.gender = 'M';
             modified_cust.govt_id = 56441;
-            modified_cust.travel_date = 20210419;
+            modified_cust.travel_date = 1;
             modified_cust.receipt_id = ticket_num;
 
             printf("Modified Customer:\n");
@@ -241,11 +241,10 @@ void clientSocket_SendReceive(int port)
     printf("%s\n", menu);
 
     char selection[2];
-    scanf("%s", selection);
+    // scanf("%s", selection);
 
     // for automation
-    // sprintf(selection, "%d", num);
-    // strcpy(selection, "1");
+    strcpy(selection, "1");
 
     send(clientSocket, selection, sizeof(selection), 0);
 
