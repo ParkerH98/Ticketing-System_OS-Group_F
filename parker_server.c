@@ -19,7 +19,7 @@ pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 
 /*
--------------------------------------------------------------
+
 This function is called by handleConnection() and carries out
 the operations chosen by the client's selection. The possible 
 operations include reserving, inquiring, modifying, and canceling
@@ -27,15 +27,15 @@ a ticket.
 
 @param selection is an int representing the customer's menu selection
 @param client_socket is an int containing the client socket connection
-@return: void
+@return void
 */
 void serverHandleSelection(int selection, int client_socket)
 {
     while(1)
     {
-        //==============================
-        //    Make Ticket Reservation
-        //==============================
+/* -------------------------------------------------------------------------- */
+/*                           MAKE TICKET RESERVATION                          */
+/* -------------------------------------------------------------------------- */
         if (selection == 1)
         {
             // assigning pointer copy because recv() wants a pointer to store the data in
@@ -78,9 +78,9 @@ void serverHandleSelection(int selection, int client_socket)
         }
 
 
-        //==============================
-        //     Make Ticket Inquiry
-        //==============================
+/* -------------------------------------------------------------------------- */
+/*                             MAKE TICKET INQUIRY                            */
+/* -------------------------------------------------------------------------- */
         else if (selection == 2)
         {
             // receives the customer's ticket number
@@ -95,9 +95,9 @@ void serverHandleSelection(int selection, int client_socket)
         }
 
 
-        //==============================
-        //   Make Ticket Modification
-        //==============================
+/* -------------------------------------------------------------------------- */
+/*                          MAKE TICKET MODIFICATION                          */
+/* -------------------------------------------------------------------------- */
         else if (selection == 3)
         {
             // receives the customer's ticket number
@@ -112,9 +112,9 @@ void serverHandleSelection(int selection, int client_socket)
         }
 
 
-        //==============================
-        //   Make Ticket Cancellation
-        //==============================
+/* -------------------------------------------------------------------------- */
+/*                          MAKE TICKET CANCELLATION                          */
+/* -------------------------------------------------------------------------- */
         else if (selection == 4)
         {
             // receives the customer's ticket number
@@ -131,9 +131,9 @@ void serverHandleSelection(int selection, int client_socket)
         }
 
 
-        //==============================
-        //       Exit The Program
-        //==============================
+/* -------------------------------------------------------------------------- */
+/*                              EXIT THE PROGRAM                              */
+/* -------------------------------------------------------------------------- */
         else if (selection == 5)
         {
             exit(0);
@@ -143,7 +143,6 @@ void serverHandleSelection(int selection, int client_socket)
 
 
 /*
--------------------------------------------------------------
 This function is executed by threads that handle the client 
 conenctions. This function gets called in the waitForWork()
 once a connection has been placed into the queue. This function 
@@ -151,7 +150,7 @@ sends the menu to the client and then calls serverHandleSelection()
 to handle the user's menu selection.
 
 @param void * referenceing the client socket connection
-@return: void * because it's a thread function
+@return void * because it's a thread function
 */
 void *handleConnection(void *client)
 {
@@ -177,7 +176,7 @@ void *handleConnection(void *client)
 
 
 /*
--------------------------------------------------------------
+
 This function is meant to clean up the server code and reduce
 the number of 'if' and 'print' statements. It takes advantage
 of the fact that most of the socket functions return -1 if 
@@ -185,7 +184,7 @@ there was an error.
 
 @param returned is what the input function returns 
 @param errMsg is the message you want to print if the input function fails
-@return: an int representing the success/failure
+@return an int representing the success/failure
 */
 int errorCheck(int returned, const char *errMsg)
 {
@@ -201,7 +200,7 @@ int errorCheck(int returned, const char *errMsg)
 
 
 /*
--------------------------------------------------------------
+
 This function servers as the manager for the thread pool. This
 function also handles the synchronization amongst all the threads.
 The threads will wait in the thread pool. Once a client_socket
@@ -209,7 +208,7 @@ is put onto the queue, an available thread will begin to
 handle the client socket connection.
 
 @param *arg because thread functions must accept and return pointers
-@return: void *
+@return void *
 */
 void * waitForWork(void *arg)
 {
@@ -243,7 +242,7 @@ void * waitForWork(void *arg)
 }
 
 /*
--------------------------------------------------------------
+
 This is the main server function. It handles all of the server
 setup including listening and binding. It also all creates the
 thread pool and spawns the threads that run the waitForWork() 
@@ -253,7 +252,7 @@ thread pool (waitForWork()) can handle the connection (handleConnection())
 
 
 @param an int representing the port number that the server will run on
-@return: void
+@return void
 */
 void serverSocket_SendReceive(int port)
 {

@@ -5,7 +5,7 @@ void promptMenu(int *selection);
 void printTrain(int day);
 
 /*
--------------------------------------------------------------
+
 This function is called by clientSocket_SendReceive() and 
 handles the client's menu selection. 
 
@@ -121,10 +121,7 @@ void clientHandleSelection(int selection, void *client)
             // receives server modification message
             char modification_message[512];
             recv(client_socket, modification_message, sizeof(modification_message), 0);
-
             printf("%s", modification_message);
-
-            
 
             printf("Please enter your credentials as prompted.\n\n");
             printf("Number of Travelers: ");
@@ -136,9 +133,6 @@ void clientHandleSelection(int selection, void *client)
                 modified_cust.seats[i] = 0;
             }
 
-           
-
-
             printf("Enter your desired seats to reserve:\n");
 
             // sets the desired customer's seats' indices to be 1
@@ -149,8 +143,6 @@ void clientHandleSelection(int selection, void *client)
                 scanf("%d", &temp);
                 modified_cust.seats[temp - 1] = 1;
             }
-
-          
 
             printf("Modified Customer:\n");
             printf("ID: %d\n", modified_cust.receipt_id);
