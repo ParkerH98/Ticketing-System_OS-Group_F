@@ -22,8 +22,8 @@
 
 
 // SERVER CONSTANTS
-#define PORT 9030
-#define NUM_SERVERS 1
+#define PORT 9035
+#define NUM_SERVERS 2
 #define BACKLOG 50
 #define THREAD_NUMBER 3
 

@@ -28,8 +28,7 @@ void clientHandleSelection(int selection, void *client)
 
             customer = getInformationFromUser();
 
-            printf("Order Preview:\n");
-            printf("ID: %d\n", customer.receipt_id);
+            printf("\n\n===================Order Preview===================\n");
             printf("Name: %s\n", customer_ptr->name);
             printf("DOB: %d\n", customer.dob);
             printf("Gender: %c\n", customer.gender);
@@ -49,17 +48,23 @@ void clientHandleSelection(int selection, void *client)
 
             printf("\n\n");
 
-            // printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
+            printf("Order Confirmation:\nAre you sure you want to place this order (Y or N)?\n");
 
             char answer[2];
-            // scanf("%s", answer);
-            sprintf(answer, "%s", "y");
+            scanf("%s", answer);
+            // sprintf(answer, "%s", "y");
 
             if ((strcmp(answer, "Y") == 0) || (strcmp(answer, "y") == 0))
             {
                 send(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
                 printf("Reservation completed. You will now be brought back to the main menu.\n\n\n");
+
+                char customer_receipt[4096];
+
+                recv(client_socket, customer_receipt, sizeof(customer_receipt), 0);
+
+                printf("%s", customer_receipt);
 
                 promptMenu(&selection);
                 send(client_socket, &selection, sizeof(selection), 0);
@@ -102,18 +107,16 @@ void clientHandleSelection(int selection, void *client)
             int ticket_num;
             scanf("%d", &ticket_num);
 
-            struct Customer modified_cust;
-            struct Customer *modified_cust_ptr = &modified_cust;
+      
 
             // automated for testing
-            strcpy(modified_cust.name, "Parker");
-            modified_cust.dob = 19980418;
-            modified_cust.gender = 'M';
-            modified_cust.govt_id = 56441;
-            modified_cust.travel_date = 1;
-            modified_cust.receipt_id = ticket_num;
+            // strcpy(modified_cust.name, "Parker");
+            // modified_cust.dob = 19980418;
+            // modified_cust.gender = 'M';
+            // modified_cust.govt_id = 56441;
+            // modified_cust.travel_date = 1;
+            // modified_cust.receipt_id = ticket_num;
 
-            printTrain(modified_cust.travel_date);
 
             send(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
@@ -122,15 +125,35 @@ void clientHandleSelection(int selection, void *client)
             recv(client_socket, modification_message, sizeof(modification_message), 0);
             printf("%s", modification_message);
 
+            struct Customer modified_cust;
+            struct Customer *modified_cust_ptr = &modified_cust;
+
             printf("Please enter your credentials as prompted.\n\n");
+            printf("Name: ");
+            char Name[50];
+            scanf(" %s", Name);
+            strcpy(modified_cust.name, Name);
+            printf("Date of Birth(YYYYMMDD): ");
+            scanf("%d", &modified_cust.dob);
+            printf("Gender (M or F): ");
+            scanf(" %c", &modified_cust.gender);
+            printf("Government ID: ");
+            scanf("%d", &modified_cust.govt_id);
+            printf("Available dates of travel: 1 or 2.\nSelect One: ");
+            scanf("%d", &modified_cust.travel_date);
             printf("Number of Travelers: ");
             scanf("%d", &modified_cust.num_traveler);
+
+            // printf("Number of Travelers: ");
+            // scanf("%d", &modified_cust.num_traveler);
 
             // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
             for (int i = 0; i < NUM_SEATS; i++)
             {
                 modified_cust.seats[i] = 0;
             }
+
+            printTrain(modified_cust.travel_date);
 
             printf("Enter your desired seats to reserve:\n");
 
@@ -143,7 +166,7 @@ void clientHandleSelection(int selection, void *client)
                 modified_cust.seats[temp - 1] = 1;
             }
 
-            printf("Modified Customer:\n");
+            printf("\n\n===================Modified Customer===================\n");
             printf("ID: %d\n", modified_cust.receipt_id);
             printf("Name: %s\n", modified_cust.name);
             printf("DOB: %d\n", modified_cust.dob);
@@ -249,12 +272,9 @@ void clientSocket_SendReceive(int port)
     read(clientSocket, menu, sizeof(menu));
     printf("%s\n", menu);
 
+    // gets user's selection and sends to server
     char selection[2];
-    // scanf("%s", selection);
-
-    // for automation
-    strcpy(selection, "1");
-
+    scanf("%s", selection);
     send(clientSocket, selection, sizeof(selection), 0);
 
     clientHandleSelection(atoi(selection), client_socket_ptr);

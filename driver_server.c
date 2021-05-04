@@ -1,6 +1,7 @@
 #include "parker_server.c"
 #include "parker_utility.c"
 #include "rasheed.c"
+#include "thomas.c"
 
 void createTrainFiles();
 

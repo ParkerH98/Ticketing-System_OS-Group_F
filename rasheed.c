@@ -7,7 +7,7 @@
 
 void printTrain(int day);
 
-void reserveSeats(struct Customer *customer, int client_socket)
+void reserveSeats(struct Customer *customer, int client_socket, int *port)
 {
     struct Customer a;
     a = *customer;
@@ -37,6 +37,7 @@ void reserveSeats(struct Customer *customer, int client_socket)
     // gives lock to writer
     sem_wait(wrt);
 
+/* ------------------------- ticket receipt printing ------------------------ */
     // opens file,  writes, and closes file 
     FILE *receipt_fp = fopen(receipt_filename, "w");
     fprintf(receipt_fp, "%s\n", a.name);
@@ -50,22 +51,30 @@ void reserveSeats(struct Customer *customer, int client_socket)
     fprintf(receipt_fp, "\n");
     fclose(receipt_fp);
 
+/* -------------------------- summary file printing ------------------------- */
     // opens file,  writes, and closes file
     FILE *summary_fp = fopen("summary.txt", "a");
-    fprintf(summary_fp, "%s\n", a.name);
-    fprintf(summary_fp, "%d\n", a.govt_id);
-    fprintf(summary_fp, "%d\n", a.travel_date);
-    fprintf(summary_fp, "%d\n", a.num_traveler);
-    for (int i = 0; i < NUM_SEATS; i++)
+    fprintf(summary_fp, "Server ID: %d\n", *port);
+    fprintf(summary_fp, "Receipt ID: %d\n", a.receipt_id);
+    fprintf(summary_fp, "Name: %s\n", a.name);
+    fprintf(summary_fp, "DOB: %d\n", a.dob);
+    fprintf(summary_fp, "Government ID: %d\n", a.govt_id);
+    fprintf(summary_fp, "Travel Day: %d\n", a.travel_date);
+    fprintf(summary_fp, "Number of Travelers: %d\n", a.num_traveler);
+    fprintf(summary_fp, "Seats Selected: \n");
+
+    fprintf(summary_fp, "===================");
+    for (int i = 0; i < NUM_SEATS - 1; i++)
     {
-        fprintf(summary_fp, "%d", a.seats[i]);
+        if (i % 10 == 0)
+            fprintf(summary_fp, "\n");
+        fprintf(summary_fp, "%d ", a.seats[i]);
     }
-    fprintf(summary_fp, "\n");
+    fprintf(summary_fp, "\n===================");
+    fprintf(summary_fp, "\n\n");
     fclose(summary_fp);
 
-    // ====================
-    // TRAINFILE OPERATIONS
-    // ====================
+/* --------------------------- trainfile printing --------------------------- */
     char train_filename[32];
 
     char travel_date_string[10];
@@ -97,7 +106,7 @@ void reserveSeats(struct Customer *customer, int client_socket)
 }
 
 
-void inquiry(int ticket) // still working
+void inquiry(int ticket)
 {
     // Reader acquire the lock before modifying read_count
     pthread_mutex_lock(&mutex);
@@ -161,7 +170,7 @@ void inquiry(int ticket) // still working
 }
 
 
-void modify(int ticket, int client_socket)
+void modify(int ticket, int client_socket, int *port)
 {
     // int ticket = a.receipt_id;
     char receipt_filename[32];
@@ -232,7 +241,7 @@ void modify(int ticket, int client_socket)
         ticket = ticket + 1000;
         modified_cust.receipt_id = ticket;
 
-        reserveSeats(modified_cust_ptr, client_socket);
+        reserveSeats(modified_cust_ptr, client_socket, port);
         remove(receipt_filename);
     }
     else
@@ -326,28 +335,28 @@ struct Customer getInformationFromUser()
     struct Customer a;
 
     printf("Please enter your credentials as prompted.\n\n");
-    // printf("Name: ");
-    // char Name[50];
-    // scanf(" %s", Name);
-    // strcpy(a.name , Name);
-    // printf("Date of Birth(YYYYMMDD): ");
-    // scanf("%d", &a.dob);
-    // printf("Gender (M or F): ");
-    // scanf(" %c", &a.gender);
-    // printf("Government ID: ");
-    // scanf("%d", &a.govt_id);
-    // printf("Available dates of travel: 1 or 2.\nSelect One: ");
-    // scanf("%d", &a.travel_date);
+    printf("Name: ");
+    char Name[50];
+    scanf(" %s", Name);
+    strcpy(a.name , Name);
+    printf("Date of Birth(YYYYMMDD): ");
+    scanf("%d", &a.dob);
+    printf("Gender (M or F): ");
+    scanf(" %c", &a.gender);
+    printf("Government ID: ");
+    scanf("%d", &a.govt_id);
+    printf("Available dates of travel: 1 or 2.\nSelect One: ");
+    scanf("%d", &a.travel_date);
     printf("Number of Travelers: ");
     scanf("%d", &a.num_traveler);
 
     // automated for testing
-    strcpy(a.name, "Parker");
-    a.dob = 19980418;
-    a.gender = 'M';
-    a.govt_id = 56441;
-    a.receipt_id = 45259;
-    a.travel_date = 1;
+    // strcpy(a.name, "Parker");
+    // a.dob = 19980418;
+    // a.gender = 'M';
+    // a.govt_id = 56441;
+    // a.receipt_id = 45259;
+    // a.travel_date = 1;
     // a.num_traveler = 1;
 
     // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
@@ -358,9 +367,9 @@ struct Customer getInformationFromUser()
 
     // a.seats[0] = 1;
 
-    // printTrain(a.travel_date);
+    printTrain(a.travel_date);
 
-    // printf("Enter your desired seats to reserve:\n");
+    printf("Enter your desired seats to reserve:\n");
 
     // sets the desired customer's seats' indices to be 1
     for (int i = 0; i < a.num_traveler; i++)
@@ -424,28 +433,30 @@ void printTrain(int day)
     strcat(train_filename, temp);
     strcat(train_filename, ".txt");
 
-    printf("%s\n", train_filename);
-
     FILE *fp1;
     fp1 = fopen(train_filename, "r");
 
-    printf("Your desired train to Hogwarts seats' are shown below:\n");
-    for (int i = 1; i < 31; i++)
-    {
-        printf("%5d", i);
-        if (i % 10 == 0)
-            printf("\n");
-    }
-    printf("\n");
+    // printf("\nYour desired train to Hogwarts seats' are shown below:\n");
+    // for (int i = 1; i < 31; i++)
+    // {
+    //     printf("%5d", i);
+    //     if (i % 10 == 0)
+    //         printf("\n");
+    // }
+    // printf("\n");
     char train_seats[32];
     fscanf(fp1, "%[^\n]", train_seats);
 
-    printf("Available seats at the moment: \n");
+    printf("Available seats at the moment:\n");
     for (int i = 0; i < 30; i++)
     {
         if (train_seats[i] == '0')
             printf("%d ", i + 1);
-        if (i % 10 == 0)
+        else
+        {
+            printf("B ");
+        }
+        if (i>0 &&  i % 10 == 0)
             printf("\n");
     }
     printf("\n\n");

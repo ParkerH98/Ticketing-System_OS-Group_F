@@ -1,27 +1,26 @@
 #include "header.h"
 
-char customer_receipt[1024];
-
-void sendReceiptToCust(struct Customer customer, int client_socket)
+void sendReceiptToCust(struct Customer customer, int client_socket, int *port)
 {
-    printf("Here is your receipt with receipt ID number %d\n", customer.receipt_id);
+    FILE *summary_fp = fopen("summary.txt", "a");
 
-    printf("{\n\tReceipt Number : %d,\n\
-        Customer name: %u,\n\
-        Government ID: %u,\n\
-        Travel Date: %u,\n\
-        Number of Travellers : %u\n\
-        Seats selected:%u\n}",
-           customer.receipt_id, customer.name, customer.govt_id, customer.travel_date, customer.num_traveler, customer.seats);
+    char customer_receipt[4096];
+    char selected_seats[256];
 
-    sprintf(customer_receipt, "{\n\tReceipt Number : %d,\n\
-           Customer name: %u,\n\
-           Government ID: %u,\n\
-           Travel Date: %u,\n\
-           Number of Travellers : %u\n\
-           Seats selected: %u\n}",
-            customer.receipt_id, customer.name, customer.govt_id, customer.travel_date, customer.num_traveler, customer.seats);
-    sprintf(customer_receipt, "Here is your receipt. Your receipt info is %d", customer.receipt_id);
+    for (int i = 0; i < NUM_SEATS - 1; i++)
+    {
+        if (i % 10 == 0)
+            strcat(selected_seats, "\n");
+        char temp[50];
+        sprintf(temp, "%d ", customer.seats[i]);
+        strcat(selected_seats, temp);
+    }
 
+    sprintf(customer_receipt, "\n\n===================Order Receipt===================\nServer ID: %d\nReceipt ID: %d\nName: %s\nDOB: %d\nGovernment ID: %d\nTravel Day: %d\nNumber of Travelers: %d\nSeats Selected: \n===================%s\n===================\n\n",
+            *port, customer.receipt_id, customer.name, customer.dob, customer.govt_id, customer.travel_date, customer.num_traveler, selected_seats);
+
+    fclose(summary_fp);
     send(client_socket, customer_receipt, sizeof(customer_receipt), 0);
+
+    strcpy(selected_seats, "");
 }

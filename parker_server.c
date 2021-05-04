@@ -1,10 +1,11 @@
 #include "header.h"
 
+void sendReceiptToCust(struct Customer customer, int client_socket, int *port);
 int *removeConnection();
 void insertConnection(int *data);
 void cancellation(int *ticket_ptr, int client_socket);
-void reserveSeats(struct Customer *customer, int client_socket);
-void modify(int ticket, int client_socket);
+void reserveSeats(struct Customer *customer, int client_socket, int *port);
+void modify(int ticket, int client_socket, int *port);
 void inquiry(int ticket);
 void sortPriority();
 Priority removePriority();
@@ -26,7 +27,7 @@ a ticket.
 @param client_socket is an int containing the client socket connection
 @return void
 */
-void serverHandleSelection(int selection, int client_socket)
+void serverHandleSelection(int selection, int client_socket, int *port)
 {
     while(1)
     {
@@ -42,7 +43,7 @@ void serverHandleSelection(int selection, int client_socket)
             // receives the Customer struct from the client
             recv(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
-            printf("\n\n\nOrder Received:\n");
+            printf("\n\n===================Order Received===================\n");
             printf("Name: %s\n", customer.name);
             printf("DOB: %d\n", customer.dob);
             printf("Gender: %c\n", customer.gender);
@@ -61,13 +62,15 @@ void serverHandleSelection(int selection, int client_socket)
             printf("\n===================");
             printf("\n\n"); 
 
-            Priority thread_priority_attr;
-            thread_priority_attr.priority = customer.num_traveler;
-            thread_priority_attr.priority = client_socket;
+            Priority priority_attributes;
+            priority_attributes.priority = customer.num_traveler;
+            priority_attributes.client_socket = client_socket;
 
-            thread_priority_attr = customerPriority(thread_priority_attr);
+            priority_attributes = customerPriority(priority_attributes);
 
-            reserveSeats(customer_ptr, thread_priority_attr.client_socket);
+            reserveSeats(customer_ptr, priority_attributes.client_socket, port);
+
+            sendReceiptToCust(customer, client_socket, port);
 
             // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
@@ -101,7 +104,7 @@ void serverHandleSelection(int selection, int client_socket)
             int ticket_num;
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
-            modify(ticket_num, client_socket);
+            modify(ticket_num, client_socket, port);
 
             // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
@@ -149,7 +152,7 @@ to handle the user's menu selection.
 @param void * referenceing the client socket connection
 @return void * because it's a thread function
 */
-void *handleConnection(void *client)
+void *handleConnection(void *client, int *port)
 {
     // justs casts the input pointer socket to an integer
     int client_socket = *((int *)client);
@@ -165,7 +168,7 @@ void *handleConnection(void *client)
     recv(client_socket, selection, sizeof(selection), 0);
 
     // function handles the client's menu selection (reserve, inquire, modify, cancel, & exit)
-    serverHandleSelection(atoi(selection), client_socket);
+    serverHandleSelection(atoi(selection), client_socket, port);
 
     close(client_socket);
     return NULL;
@@ -206,7 +209,7 @@ handle the client socket connection.
 @param *arg because thread functions must accept and return pointers
 @return void *
 */
-void * waitForWork(void *arg)
+void * waitForWork(void *port)
 {
     // threads infinitely check for work while the program is active
     while (1)
@@ -232,7 +235,7 @@ void * waitForWork(void *arg)
         // queue, else, allow a thread to handle the connection since one was pulled from the queue
         if (client_socket != NULL)
         {
-            handleConnection(client_socket);
+            handleConnection(client_socket, port);
         }
     }
 }
@@ -257,7 +260,7 @@ void serverSocket_SendReceive(int port)
     // each created thread will run the waitForWork() which will infinitely loop and check for connections
     for (int i = 0; i < THREAD_NUMBER; i++)
     {
-        pthread_create(&thread_pool[i], NULL, waitForWork, NULL);
+        pthread_create(&thread_pool[i], NULL, waitForWork, &port);
     }
 
     // typedef the structs to clean up the server code

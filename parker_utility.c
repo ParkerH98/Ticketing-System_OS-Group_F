@@ -166,6 +166,7 @@ void sortPriority()
         }
     }
 
+    // starvation avoidance
     for (int i = 0; i < count; i++)
     {
         (priorities->priority)++;
@@ -175,7 +176,6 @@ void sortPriority()
 
 Priority customerPriority(Priority priority)
 {
-
     insertPriority(priority);
     sortPriority();
     Priority highest_priority = removePriority();
