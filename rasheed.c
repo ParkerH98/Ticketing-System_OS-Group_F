@@ -60,6 +60,7 @@ void reserveSeats(struct Customer *customer, int client_socket, int *port)
     fprintf(summary_fp, "DOB: %d\n", a.dob);
     fprintf(summary_fp, "Government ID: %d\n", a.govt_id);
     fprintf(summary_fp, "Travel Day: %d\n", a.travel_date);
+
     fprintf(summary_fp, "Number of Travelers: %d\n", a.num_traveler);
     fprintf(summary_fp, "Seats Selected: \n");
 
@@ -347,8 +348,33 @@ struct Customer getInformationFromUser()
     scanf("%d", &a.govt_id);
     printf("Available dates of travel: 1 or 2.\nSelect One: ");
     scanf("%d", &a.travel_date);
+    
+
+    // Changes Made +++++++++++++++
+    //count the number of seats available
+    FILE *train_fp;
+    train_fp = fopen(train_filename, "r");
+    char seats_counter[33];
+    fscanf(train_fp, "%s", seats_counter);
+    fclose(train_fp);
+    int counter = 0; 
+    int len = strlen(seats_counter);
+    for(int i = 0; i<len; i++)
+    {
+        if(seats_counter[i] == '0') counter++;
+    }
+
     printf("Number of Travelers: ");
     scanf("%d", &a.num_traveler);
+
+    while(a.num_traveler>counter)
+    {
+        printf("We don't have that many seats left. Select a number between 1-%d: ", counter);
+        scanf("%d", &a.num_traveler);
+    } 
+
+
+    //Changes Made --------------
 
     // automated for testing
     // strcpy(a.name, "Parker");
