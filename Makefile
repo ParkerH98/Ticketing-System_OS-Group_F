@@ -41,3 +41,4 @@ s: $(SOBJS) # step 1
 #==========================
 clean:
 	rm *.o $(EXECS) *.txt
+	clear

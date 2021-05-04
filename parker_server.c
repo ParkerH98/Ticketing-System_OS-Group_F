@@ -1,21 +1,84 @@
 #include "header.h"
 
-void sendReceiptToCust(struct Customer customer, int client_socket, int *port);
-int *removeConnection();
-void insertConnection(int *data);
-void cancellation(int *ticket_ptr, int client_socket);
-void reserveSeats(struct Customer *customer, int client_socket, int *port);
-void modify(int ticket, int client_socket, int *port);
-void inquiry(int ticket);
-void sortPriority();
-Priority removePriority();
-void insertPriority(Priority data);
-Priority customerPriority(Priority priority);
+void *handleConnection(void *client, int *port);
+void *waitForWork(void *port);
+int errorCheck(int returned, const char *errMsg);
 
 pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 
+/* -------------------------------------------------------------------------- */
+/*                              SERVER FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
+
+/*
+This is the main server function. It handles all of the server
+setup including listening and binding. It also all creates the
+thread pool and spawns the threads that run the waitForWork() 
+in the pool. As connections are accepted by the server, they're
+placed onto the queue (insertConnection()) so a thread from the 
+thread pool (waitForWork()) can handle the connection (handleConnection())
+
+
+@param an int representing the port number that the server will run on
+@return void
+*/
+void serverSocket_SendReceive(int port)
+{
+    // an array of threads representing the thread pool
+    pthread_t thread_pool[THREAD_NUMBER];
+
+    // each created thread will run the waitForWork() which will infinitely loop and check for connections
+    for (int i = 0; i < THREAD_NUMBER; i++)
+    {
+        pthread_create(&thread_pool[i], NULL, waitForWork, &port);
+    }
+
+    // typedef the structs to clean up the server code
+    typedef struct sockaddr_in SA_IN;
+    typedef struct sockaddr SA;
+
+    int entrySocket, connectionSocket, addr_size;
+    SA_IN server_addr, client_addr;
+
+    // The three arguments are: Internet domain, Stream socket, Default protocol (TCP in this case)
+    errorCheck(entrySocket = socket(PF_INET, SOCK_STREAM, 0), "Error creating socket"); // Create the socket
+
+    // Configure settings of the server address struct
+    server_addr.sin_family = AF_INET;                //Address family = Internet
+    server_addr.sin_port = htons(port);              //Set port number, using htons function to use proper byte order
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY); //Sets IP to accept from any IP address
+
+    // bind and listen
+    errorCheck(bind(entrySocket, (struct sockaddr *)&server_addr, sizeof(server_addr)), "Error in bind"); //Bind the address struct to the socket
+    errorCheck(listen(entrySocket, BACKLOG), "Error listening");
+
+    printf("SERVER: Listening on port %d\n", port);
+
+    while (1)
+    {
+        //Accept call creates a new socket for the incoming connection
+        addr_size = sizeof(SA_IN);
+        connectionSocket = accept(entrySocket, (SA *)&client_addr, (socklen_t *)&addr_size);
+        printf("SERVER: Connected to client\n");
+
+        int *client_socket = malloc(sizeof(int));
+        *client_socket = connectionSocket;
+
+        // locks the mutex so we can insert a connection onto the queue ~ needed for multithreaded synchronization
+        pthread_mutex_lock(&mutex);
+
+        insertConnection(client_socket);
+
+        // signals the condition variable to quit waiting now that a connection is available
+        // this was used to eliminate "busy waiting"
+        pthread_cond_signal(&condition_thread);
+
+        // unlocks or "releases" the mutex so another thread can use it
+        pthread_mutex_unlock(&mutex);
+    }
+}
 
 /*
 This function is called by handleConnection() and carries out
@@ -29,11 +92,11 @@ a ticket.
 */
 void serverHandleSelection(int selection, int client_socket, int *port)
 {
-    while(1)
+    while (1)
     {
-/* -------------------------------------------------------------------------- */
-/*                           MAKE TICKET RESERVATION                          */
-/* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                           MAKE TICKET RESERVATION                          */
+        /* -------------------------------------------------------------------------- */
         if (selection == 1)
         {
             // assigning pointer copy because recv() wants a pointer to store the data in
@@ -60,7 +123,7 @@ void serverHandleSelection(int selection, int client_socket, int *port)
                 printf("%d ", customer.seats[i]);
             }
             printf("\n===================");
-            printf("\n\n"); 
+            printf("\n\n");
 
             Priority priority_attributes;
             priority_attributes.priority = customer.num_traveler;
@@ -77,10 +140,9 @@ void serverHandleSelection(int selection, int client_socket, int *port)
             continue;
         }
 
-
-/* -------------------------------------------------------------------------- */
-/*                             MAKE TICKET INQUIRY                            */
-/* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                             MAKE TICKET INQUIRY                            */
+        /* -------------------------------------------------------------------------- */
         else if (selection == 2)
         {
             // receives the customer's ticket number
@@ -94,10 +156,9 @@ void serverHandleSelection(int selection, int client_socket, int *port)
             continue;
         }
 
-
-/* -------------------------------------------------------------------------- */
-/*                          MAKE TICKET MODIFICATION                          */
-/* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                          MAKE TICKET MODIFICATION                          */
+        /* -------------------------------------------------------------------------- */
         else if (selection == 3)
         {
             // receives the customer's ticket number
@@ -111,10 +172,9 @@ void serverHandleSelection(int selection, int client_socket, int *port)
             continue;
         }
 
-
-/* -------------------------------------------------------------------------- */
-/*                          MAKE TICKET CANCELLATION                          */
-/* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                          MAKE TICKET CANCELLATION                          */
+        /* -------------------------------------------------------------------------- */
         else if (selection == 4)
         {
             // receives the customer's ticket number
@@ -130,10 +190,9 @@ void serverHandleSelection(int selection, int client_socket, int *port)
             continue;
         }
 
-
-/* -------------------------------------------------------------------------- */
-/*                              EXIT THE PROGRAM                              */
-/* -------------------------------------------------------------------------- */
+        /* -------------------------------------------------------------------------- */
+        /*                              EXIT THE PROGRAM                              */
+        /* -------------------------------------------------------------------------- */
         else if (selection == 5)
         {
             exit(0);
@@ -141,6 +200,75 @@ void serverHandleSelection(int selection, int client_socket, int *port)
     }
 }
 
+
+/*
+This function is meant to clean up the server code and reduce
+the number of 'if' and 'print' statements. It takes advantage
+of the fact that most of the socket functions return -1 if 
+there was an error.
+
+@param returned is what the input function returns 
+@param errMsg is the message you want to print if the input function fails
+@return an int representing the success/failure
+*/
+int errorCheck(int returned, const char *errMsg)
+{
+    // prints error message if -1 is returned by the input function
+    if (returned == -1)
+    {
+        perror(errMsg);
+        exit(1);
+    }
+    else
+        return 1;
+}
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                              THREAD FUNCTIONS                              */
+/* -------------------------------------------------------------------------- */
+
+/*
+This function servers as the manager for the thread pool. This
+function also handles the synchronization amongst all the threads.
+The threads will wait in the thread pool. Once a client_socket
+is put onto the queue, an available thread will begin to 
+handle the client socket connection.
+
+@param *arg because thread functions must accept and return pointers
+@return void *
+*/
+void *waitForWork(void *port)
+{
+    // threads infinitely check for work while the program is active
+    while (1)
+    {
+        int *client_socket;
+
+        // locks a mutex so a thread can remove a client_socket from the queue (if it's available)
+        // this is done for multithreaded synchronization
+        pthread_mutex_lock(&mutex);
+
+        // This uses a condition variable and mutex lock to allow the threads to not have to constantly
+        // loop the while() and check for work. This eliminates "busy waiting" thus dramatically improving
+        // the resources used by the server
+        pthread_cond_wait(&condition_thread, &mutex);
+
+        // client socket is being set to the client_socket at the top of the queue
+        client_socket = removeConnection();
+
+        // unlocks or "returns" the mutex to allow another thread to access the lock now that removal has finished
+        pthread_mutex_unlock(&mutex);
+
+        // if the client_socket is NULL then there isn't any connections currently available in the
+        // queue, else, allow a thread to handle the connection since one was pulled from the queue
+        if (client_socket != NULL)
+        {
+            handleConnection(client_socket, port);
+        }
+    }
+}
 
 /*
 This function is executed by threads that handle the client 
@@ -174,136 +302,3 @@ void *handleConnection(void *client, int *port)
     return NULL;
 }
 
-
-/*
-
-This function is meant to clean up the server code and reduce
-the number of 'if' and 'print' statements. It takes advantage
-of the fact that most of the socket functions return -1 if 
-there was an error.
-
-@param returned is what the input function returns 
-@param errMsg is the message you want to print if the input function fails
-@return an int representing the success/failure
-*/
-int errorCheck(int returned, const char *errMsg)
-{
-    // prints error message if -1 is returned by the input function
-    if (returned == -1)
-    {
-        perror(errMsg);
-        exit(1);
-    }
-    else
-        return 1;
-}
-
-
-/*
-This function servers as the manager for the thread pool. This
-function also handles the synchronization amongst all the threads.
-The threads will wait in the thread pool. Once a client_socket
-is put onto the queue, an available thread will begin to 
-handle the client socket connection.
-
-@param *arg because thread functions must accept and return pointers
-@return void *
-*/
-void * waitForWork(void *port)
-{
-    // threads infinitely check for work while the program is active
-    while (1)
-    {
-        int *client_socket;
-
-        // locks a mutex so a thread can remove a client_socket from the queue (if it's available)
-        // this is done for multithreaded synchronization
-        pthread_mutex_lock(&mutex);
-
-        // This uses a condition variable and mutex lock to allow the threads to not have to constantly 
-        // loop the while() and check for work. This eliminates "busy waiting" thus dramatically improving 
-        // the resources used by the server
-        pthread_cond_wait(&condition_thread, &mutex);
-
-        // client socket is being set to the client_socket at the top of the queue
-        client_socket = removeConnection();
-
-        // unlocks or "returns" the mutex to allow another thread to access the lock now that removal has finished
-        pthread_mutex_unlock(&mutex);
-
-        // if the client_socket is NULL then there isn't any connections currently available in the
-        // queue, else, allow a thread to handle the connection since one was pulled from the queue
-        if (client_socket != NULL)
-        {
-            handleConnection(client_socket, port);
-        }
-    }
-}
-
-/*
-This is the main server function. It handles all of the server
-setup including listening and binding. It also all creates the
-thread pool and spawns the threads that run the waitForWork() 
-in the pool. As connections are accepted by the server, they're
-placed onto the queue (insertConnection()) so a thread from the 
-thread pool (waitForWork()) can handle the connection (handleConnection())
-
-
-@param an int representing the port number that the server will run on
-@return void
-*/
-void serverSocket_SendReceive(int port)
-{
-    // an array of threads representing the thread pool
-    pthread_t thread_pool[THREAD_NUMBER];
-
-    // each created thread will run the waitForWork() which will infinitely loop and check for connections
-    for (int i = 0; i < THREAD_NUMBER; i++)
-    {
-        pthread_create(&thread_pool[i], NULL, waitForWork, &port);
-    }
-
-    // typedef the structs to clean up the server code
-    typedef struct sockaddr_in SA_IN;
-    typedef struct sockaddr SA;
-
-    int entrySocket, connectionSocket, addr_size;
-    SA_IN server_addr, client_addr;
-    
-    // The three arguments are: Internet domain, Stream socket, Default protocol (TCP in this case)
-    errorCheck(entrySocket = socket(PF_INET, SOCK_STREAM, 0), "Error creating socket"); // Create the socket
-
-    // Configure settings of the server address struct
-    server_addr.sin_family = AF_INET;                               //Address family = Internet
-    server_addr.sin_port = htons(port);                             //Set port number, using htons function to use proper byte order
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);                //Sets IP to accept from any IP address
-
-    // bind and listen
-    errorCheck(bind(entrySocket, (struct sockaddr *)&server_addr, sizeof(server_addr)), "Error in bind"); //Bind the address struct to the socket
-    errorCheck(listen(entrySocket, BACKLOG), "Error listening");
-
-    printf("SERVER: Listening on port %d\n", port);
-
-    while (1)
-    {
-        //Accept call creates a new socket for the incoming connection
-        addr_size = sizeof(SA_IN);
-        connectionSocket = accept(entrySocket, (SA *)&client_addr, (socklen_t *)&addr_size);
-        printf("SERVER: Connected to client\n");
-
-        int *client_socket = malloc(sizeof(int));
-        *client_socket = connectionSocket;
-
-        // locks the mutex so we can insert a connection onto the queue ~ needed for multithreaded synchronization
-        pthread_mutex_lock(&mutex);
-
-        insertConnection(client_socket);
-
-        // signals the condition variable to quit waiting now that a connection is available
-        // this was used to eliminate "busy waiting"
-        pthread_cond_signal(&condition_thread);
-
-        // unlocks or "releases" the mutex so another thread can use it
-        pthread_mutex_unlock(&mutex);
-    }
-}

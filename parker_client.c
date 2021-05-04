@@ -1,8 +1,6 @@
 #include "header.h"
 
-struct Customer getInformationFromUser();
 void promptMenu(int *selection);
-void printTrain(int day);
 
 /*
 This function is called by clientSocket_SendReceive() and 
@@ -177,7 +175,7 @@ void clientHandleSelection(int selection, void *client)
             printf("Seats Chosen: \n");
             for (int i = 0; i < NUM_SEATS; i++)
             {
-                printf("%d ", modified_cust.seats[i]);
+                printf("%d", modified_cust.seats[i]);
             }
             printf("\n\n");
 

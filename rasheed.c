@@ -352,6 +352,14 @@ struct Customer getInformationFromUser()
 
     // Changes Made +++++++++++++++
     //count the number of seats available
+
+    char train_filename[32];
+    char Day[5];
+    sprintf(Day, "%d", &a.travel_date);
+
+    strcpy(train_filename, "train_day");
+    strcat(train_filename, Day);
+    strcat(train_filename, ".txt");
     FILE *train_fp;
     train_fp = fopen(train_filename, "r");
     char seats_counter[33];

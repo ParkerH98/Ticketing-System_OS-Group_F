@@ -18,17 +18,12 @@
 #include <assert.h> // error checking
 #include <stdbool.h> // used in thomas.c
 
-
-
-
 // SERVER CONSTANTS
 #define PORT 9035
 #define NUM_SERVERS 2
 #define BACKLOG 50
 #define THREAD_NUMBER 3
-
 #define QUEUE_SIZE 6
-
 
 // STRUCT CONSTANTS
 #define CUST_NAME_LEN 50
@@ -59,5 +54,24 @@ pthread_mutex_t mutex;
 static int read_count = 0;
 
 int receipt_num = 1001;
+
+// thomas' prototypes
+void sendReceiptToCust(struct Customer customer, int client_socket, int *port);
+
+// rasheed's prototypes
+void reserveSeats(struct Customer *customer, int client_socket, int *port);
+void modify(int ticket, int client_socket, int *port);
+void cancellation(int *ticket_ptr, int client_socket);
+void inquiry(int ticket);
+void printTrain(int day);
+struct Customer getInformationFromUser();
+
+// parker's prototypes
+void sortPriority();
+Priority removePriority();
+void insertPriority(Priority data);
+Priority customerPriority(Priority priority);
+int *removeConnection();
+void insertConnection(int *data);
 
 #endif
