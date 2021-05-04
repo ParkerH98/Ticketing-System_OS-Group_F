@@ -50,6 +50,19 @@ void reserveSeats(struct Customer *customer, int client_socket)
     fprintf(receipt_fp, "\n");
     fclose(receipt_fp);
 
+    // opens file,  writes, and closes file
+    FILE *summary_fp = fopen("summary.txt", "a");
+    fprintf(summary_fp, "%s\n", a.name);
+    fprintf(summary_fp, "%d\n", a.govt_id);
+    fprintf(summary_fp, "%d\n", a.travel_date);
+    fprintf(summary_fp, "%d\n", a.num_traveler);
+    for (int i = 0; i < NUM_SEATS; i++)
+    {
+        fprintf(summary_fp, "%d", a.seats[i]);
+    }
+    fprintf(summary_fp, "\n");
+    fclose(summary_fp);
+
     // ====================
     // TRAINFILE OPERATIONS
     // ====================

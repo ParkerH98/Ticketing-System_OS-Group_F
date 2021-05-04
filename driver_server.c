@@ -11,8 +11,11 @@ int main()
 {
     createTrainFiles();
 
+    FILE *summary_fp = fopen("summary.txt", "w");
+    fclose(summary_fp);
+
     // initializes the mutex used when inserting/removing to/from the thread pool
-    pthread_mutex_init(&mutex, NULL); 
+    pthread_mutex_init(&mutex, NULL);
 
     // creates NUM_SERVER number of processes that are servers
     for (int i = 0; i < NUM_SERVERS; i++)

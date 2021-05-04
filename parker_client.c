@@ -5,13 +5,12 @@ void promptMenu(int *selection);
 void printTrain(int day);
 
 /*
-
 This function is called by clientSocket_SendReceive() and 
 handles the client's menu selection. 
 
 @param selection is an int representing the customer's menu selection
 @param client_socket is an int containing the client socket connection
-@return: void
+@return void
 */
 void clientHandleSelection(int selection, void *client)
 {

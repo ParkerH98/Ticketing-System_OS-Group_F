@@ -16,10 +16,7 @@ pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 
 
-
-
 /*
-
 This function is called by handleConnection() and carries out
 the operations chosen by the client's selection. The possible 
 operations include reserving, inquiring, modifying, and canceling
@@ -200,7 +197,6 @@ int errorCheck(int returned, const char *errMsg)
 
 
 /*
-
 This function servers as the manager for the thread pool. This
 function also handles the synchronization amongst all the threads.
 The threads will wait in the thread pool. Once a client_socket
@@ -242,7 +238,6 @@ void * waitForWork(void *arg)
 }
 
 /*
-
 This is the main server function. It handles all of the server
 setup including listening and binding. It also all creates the
 thread pool and spawns the threads that run the waitForWork() 
@@ -309,4 +304,3 @@ void serverSocket_SendReceive(int port)
         pthread_mutex_unlock(&mutex);
     }
 }
-
