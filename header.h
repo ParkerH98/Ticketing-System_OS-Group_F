@@ -72,6 +72,6 @@ Priority removePriority();
 void insertPriority(Priority data);
 Priority customerPriority(Priority priority);
 int *removeConnection();
-void insertConnection(int *data);
+void insertConnection(int *client_socket);
 
 #endif

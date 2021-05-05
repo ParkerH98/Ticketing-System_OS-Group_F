@@ -1,3 +1,7 @@
+// Name: Parker Hague
+// Email: phague@okstate.edu
+// Group: F
+
 #include "header.h"
 
 void *handleConnection(void *client, int *port);
@@ -12,6 +16,8 @@ pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 /* -------------------------------------------------------------------------- */
 /*                              SERVER FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
+
+
 
 /*
 This is the main server function. It handles all of the server
@@ -79,6 +85,8 @@ void serverSocket_SendReceive(int port)
         pthread_mutex_unlock(&mutex);
     }
 }
+
+
 
 /*
 This function is called by handleConnection() and carries out
@@ -201,6 +209,7 @@ void serverHandleSelection(int selection, int client_socket, int *port)
 }
 
 
+
 /*
 This function is meant to clean up the server code and reduce
 the number of 'if' and 'print' statements. It takes advantage
@@ -224,9 +233,12 @@ int errorCheck(int returned, const char *errMsg)
 }
 
 
+
 /* -------------------------------------------------------------------------- */
 /*                              THREAD FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
+
+
 
 /*
 This function servers as the manager for the thread pool. This
@@ -268,6 +280,8 @@ void *waitForWork(void *port)
         }
     }
 }
+
+
 
 /*
 This function is executed by threads that handle the client 
