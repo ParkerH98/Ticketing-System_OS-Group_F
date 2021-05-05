@@ -19,8 +19,8 @@
 #include <stdbool.h> // used in thomas.c
 
 // SERVER CONSTANTS
-#define PORT 9035
-#define NUM_SERVERS 2
+#define PORT 9044
+#define NUM_SERVERS 5
 #define BACKLOG 50
 #define THREAD_NUMBER 3
 #define QUEUE_SIZE 6
@@ -62,7 +62,7 @@ void sendReceiptToCust(struct Customer customer, int client_socket, int *port);
 void reserveSeats(struct Customer *customer, int client_socket, int *port);
 void modify(int ticket, int client_socket, int *port);
 void cancellation(int *ticket_ptr, int client_socket);
-void inquiry(int ticket);
+void inquiry(int ticket, int client_socket);
 void printTrain(int day);
 struct Customer getInformationFromUser();
 

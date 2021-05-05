@@ -71,7 +71,6 @@ void insertConnection(int *data)
         intArray[++tail] = *data;
         count++;
     }
-    printf("QUEUE: Count --> %d\n", count);
 }
 
 int *removeConnection()
@@ -147,7 +146,6 @@ void insertPriority(Priority data)
         priorities[++priority_tail] = data;
         priority_count++;
     }
-    printf("QUEUE: Count --> %d\n", priority_count);
 }
 
 

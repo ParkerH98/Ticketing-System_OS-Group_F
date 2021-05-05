@@ -8,6 +8,7 @@ pthread_mutex_t mutex;
 pthread_cond_t condition_thread = PTHREAD_COND_INITIALIZER;
 
 
+
 /* -------------------------------------------------------------------------- */
 /*                              SERVER FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
@@ -19,7 +20,6 @@ thread pool and spawns the threads that run the waitForWork()
 in the pool. As connections are accepted by the server, they're
 placed onto the queue (insertConnection()) so a thread from the 
 thread pool (waitForWork()) can handle the connection (handleConnection())
-
 
 @param an int representing the port number that the server will run on
 @return void
@@ -61,7 +61,7 @@ void serverSocket_SendReceive(int port)
         //Accept call creates a new socket for the incoming connection
         addr_size = sizeof(SA_IN);
         connectionSocket = accept(entrySocket, (SA *)&client_addr, (socklen_t *)&addr_size);
-        printf("SERVER: Connected to client\n");
+        printf("SERVER: Connected to client at port %d\n", port);
 
         int *client_socket = malloc(sizeof(int));
         *client_socket = connectionSocket;
@@ -149,7 +149,7 @@ void serverHandleSelection(int selection, int client_socket, int *port)
             int ticket_num;
             recv(client_socket, &ticket_num, sizeof(ticket_num), 0);
 
-            inquiry(ticket_num);
+            inquiry(ticket_num, client_socket);
 
             // receives the client's selection and continues the loop if they don't choose to exit
             recv(client_socket, &selection, sizeof(selection), 0);
@@ -224,7 +224,6 @@ int errorCheck(int returned, const char *errMsg)
 }
 
 
-
 /* -------------------------------------------------------------------------- */
 /*                              THREAD FUNCTIONS                              */
 /* -------------------------------------------------------------------------- */
@@ -285,10 +284,8 @@ void *handleConnection(void *client, int *port)
     // justs casts the input pointer socket to an integer
     int client_socket = *((int *)client);
 
-    printf("SERVER: Connected to client.\n");
-
     // sends the menu to the client
-    char menu[256] = "\n\n\n\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
+    char menu[256] = "\n\n\n========================\n    Reservation Menu\n========================\n\nPlease choose a selection.\n\n1: Make a reservation\n2: Inquiry about the ticket\n3: Modify the reservation\n4: Cancel the reservation\n5: Exit the program\n";
     send(client_socket, menu, sizeof(menu), 0);
 
     // receives the clients menu selection
@@ -301,4 +298,3 @@ void *handleConnection(void *client, int *port)
     close(client_socket);
     return NULL;
 }
-

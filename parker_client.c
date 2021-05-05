@@ -56,7 +56,7 @@ void clientHandleSelection(int selection, void *client)
             {
                 send(client_socket, customer_ptr, sizeof(struct Customer), 0);
 
-                printf("Reservation completed. You will now be brought back to the main menu.\n\n\n");
+                printf("Reservation completed. You will now be brought back to the main menu.\n\n");
 
                 char customer_receipt[4096];
 
@@ -87,6 +87,10 @@ void clientHandleSelection(int selection, void *client)
             int ticket_num;
             scanf("%d", &ticket_num);
             send(client_socket, &ticket_num, sizeof(ticket_num), 0);
+
+            char inquiry_msg[1024];
+            recv(client_socket, inquiry_msg, sizeof(inquiry_msg), 0);
+            printf("%s", inquiry_msg);
 
             promptMenu(&selection);
             send(client_socket, &selection, sizeof(selection), 0);
@@ -165,7 +169,6 @@ void clientHandleSelection(int selection, void *client)
             }
 
             printf("\n\n===================Modified Customer===================\n");
-            printf("ID: %d\n", modified_cust.receipt_id);
             printf("Name: %s\n", modified_cust.name);
             printf("DOB: %d\n", modified_cust.dob);
             printf("Gender: %c\n", modified_cust.gender);
@@ -173,15 +176,18 @@ void clientHandleSelection(int selection, void *client)
             printf("Travel Date: %d\n", modified_cust.travel_date);
             printf("Number of Travelers: %d\n", modified_cust.num_traveler);
             printf("Seats Chosen: \n");
+            printf("===================\n");
             for (int i = 0; i < NUM_SEATS; i++)
             {
                 printf("%d", modified_cust.seats[i]);
             }
+            printf("\n===================");
+
             printf("\n\n");
 
             send(client_socket, modified_cust_ptr, sizeof(struct Customer), 0);
 
-            printf("Modification completed. You will now be brought back to the main menu.\n\n\n");
+            printf("Modification completed. You will now be brought back to the main menu.\n\n");
 
             promptMenu(&selection);
             send(client_socket, &selection, sizeof(selection), 0);
@@ -216,7 +222,7 @@ void clientHandleSelection(int selection, void *client)
                 send(client_socket, answer, sizeof(answer), 0);
             }
 
-            printf("Cancellation completed. You will now be brought back to the main menu.\n\n\n");
+            printf("Cancellation completed. You will now be brought back to the main menu.\n\n");
 
             promptMenu(&selection);
             send(client_socket, &selection, sizeof(selection), 0);

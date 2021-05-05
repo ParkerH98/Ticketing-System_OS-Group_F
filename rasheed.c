@@ -54,6 +54,10 @@ void reserveSeats(struct Customer *customer, int client_socket, int *port)
 /* -------------------------- summary file printing ------------------------- */
     // opens file,  writes, and closes file
     FILE *summary_fp = fopen("summary.txt", "a");
+    if (a.receipt_id >= 2000)
+    {
+        fprintf(summary_fp, "**MODIFIED**\n");
+    }
     fprintf(summary_fp, "Server ID: %d\n", *port);
     fprintf(summary_fp, "Receipt ID: %d\n", a.receipt_id);
     fprintf(summary_fp, "Name: %s\n", a.name);
@@ -106,8 +110,7 @@ void reserveSeats(struct Customer *customer, int client_socket, int *port)
     sem_post(wrt);
 }
 
-
-void inquiry(int ticket)
+void inquiry(int ticket, int client_socket)
 {
     // Reader acquire the lock before modifying read_count
     pthread_mutex_lock(&mutex);
@@ -129,7 +132,7 @@ void inquiry(int ticket)
 
     if (fopen(receipt_filename, "r"))
     {
-        printf("Ticket number %d has been found.\n", ticket);
+        printf("Inquiry Received: Found ticket [%d] in our database.\n", ticket);
 
         FILE *fp1;
         fp1 = fopen(receipt_filename, "r");
@@ -139,17 +142,45 @@ void inquiry(int ticket)
         char temp5[35];
         fscanf(fp1, "%[^\n]%d%d%d%s", temp, &temp2, &temp3, &temp4, temp5);
 
-        printf("Name: %s\n", temp);
-        printf("Date of Birth: %d\n", temp2);
-        printf("Govt. ID: %d\n", temp3);
-        printf("Number of seats: %d\n", temp4);
 
-        for (int i = 0; i < 30; i++)
+        char inquiry_msg[1024];
+        char selected_seats[256];
+
+        for (int i = 0; i < NUM_SEATS - 1; i++)
         {
-            if (temp5[i] == '1')
-                printf("%d ", i + 1);
+            if (i % 10 == 0)
+                strcat(selected_seats, "\n");
+            char temp[50];
+            sprintf(temp, "%c ", temp5[i]);
+            strcat(selected_seats, temp);
         }
-        printf("\n");
+
+        // for (int i = 0; i < NUM_SEATS - 1; i++)
+        // {
+        //     if (i % 10 == 0)
+        //         strcat(selected_seats, "\n");
+            
+
+        //     sprintf(temp, "%d ", temp5[i]);
+        //     strcat(selected_seats, temp);
+        // }
+
+        sprintf(inquiry_msg, "\n\n===================Inquiry Results===================\nName: %s\nDOB: %d\nGovernment ID: %d\nNumber of Travelers: %d\nSeats Selected: \n===================%s\n===================\n\n",
+                temp, temp2, temp3, temp4, selected_seats);
+
+        send(client_socket, inquiry_msg, sizeof(inquiry_msg), 0);
+
+                // printf("Name: %s\n", temp);
+        // printf("Date of Birth: %d\n", temp2);
+        // printf("Govt. ID: %d\n", temp3);
+        // printf("Number of seats: %d\n", temp4);
+
+        // for (int i = 0; i < 30; i++)
+        // {
+        //     if (temp5[i] == '1')
+        //         printf("%d ", i + 1);
+        // }
+        // printf("\n");
 
         fclose(fp1);
 
@@ -191,7 +222,7 @@ void modify(int ticket, int client_socket, int *port)
     {
         char modification_message[512];
 
-        sprintf(modification_message, "Found ticket [%d] in our database.\nModifying ticket. Please enter the information below.\n", ticket);
+        sprintf(modification_message, "\nFound ticket [%d] in our database. Now modifying ticket.\n", ticket);
         send(client_socket, modification_message, sizeof(modification_message), 0);
 
         FILE *fp1;
@@ -216,9 +247,6 @@ void modify(int ticket, int client_socket, int *port)
         
         char seats_now[31];
         fscanf(fp1, "%s", seats_now);
-
-        printf("SEAT: %s\n", seats_now);
-
         fclose(fp1);
 
         fp1 = fopen(train_filename, "w");
@@ -349,17 +377,13 @@ struct Customer getInformationFromUser()
     printf("Available dates of travel: 1 or 2.\nSelect One: ");
     scanf("%d", &a.travel_date);
     
-
-    // Changes Made +++++++++++++++
-    //count the number of seats available
-
-    char train_temporary[32];
+    char train_filename[32];
     char Day[5];
-    sprintf(Day, "%d", &a.travel_date);
+    sprintf(Day, "%d", a.travel_date);
 
-    strcpy(train_temporary, "train_day");
-    strcat(train_temporary, Day);
-    strcat(train_temporary, ".txt");
+    strcpy(train_filename, "train_day");
+    strcat(train_filename, Day);
+    strcat(train_filename, ".txt");
     FILE *train_fp;
     train_fp = fopen(train_filename, "r");
     char seats_counter[33];
@@ -382,24 +406,11 @@ struct Customer getInformationFromUser()
     } 
 
 
-    //Changes Made --------------
-
-    // automated for testing
-    // strcpy(a.name, "Parker");
-    // a.dob = 19980418;
-    // a.gender = 'M';
-    // a.govt_id = 56441;
-    // a.receipt_id = 45259;
-    // a.travel_date = 1;
-    // a.num_traveler = 1;
-
     // Sets all the values of the seats[] to be 0. This fixes a bug where unexpected values were present in the array.
     for (int i = 0; i < NUM_SEATS; i++)
     {
         a.seats[i] = 0;
     }
-
-    // a.seats[0] = 1;
 
     printTrain(a.travel_date);
 
@@ -470,31 +481,22 @@ void printTrain(int day)
     FILE *fp1;
     fp1 = fopen(train_filename, "r");
 
-    // printf("\nYour desired train to Hogwarts seats' are shown below:\n");
-    // for (int i = 1; i < 31; i++)
-    // {
-    //     printf("%5d", i);
-    //     if (i % 10 == 0)
-    //         printf("\n");
-    // }
-    // printf("\n");
     char train_seats[32];
     fscanf(fp1, "%[^\n]", train_seats);
 
     printf("Available seats at the moment:\n");
-    for (int i = 0; i < 30; i++)
+    printf("======================================");
+    for (int i = 0; i < NUM_SEATS - 1; i++)
     {
-        if (train_seats[i] == '0')
-            printf("%d ", i + 1);
-        else
-        {
-            printf("B ");
-        }
-        if (i>0 &&  i % 10 == 0)
+        if (i % 10 == 0)
             printf("\n");
-    }
-    printf("\n\n");
 
+        if (train_seats[i] == '0')
+            printf("%-3d ", i + 1);
+        else
+            printf("%-3c ", 'B');
+    }
+    printf("\n======================================\n\n");
     fclose(fp1);
 }
 

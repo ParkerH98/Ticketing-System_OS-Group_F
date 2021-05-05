@@ -40,5 +40,5 @@ s: $(SOBJS) # step 1
 #		Utilities
 #==========================
 clean:
-	rm *.o $(EXECS) *.txt
 	clear
+	rm *.o $(EXECS) *.txt
