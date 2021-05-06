@@ -428,7 +428,7 @@ struct Customer getInformationFromUser()
     printf("Enter your desired seats to reserve:\n");
 
     // sets the desired customer's seats' indices to be 1
-    for (int i = 0; i < a.num_traveler; i++)
+    for (int i = 0; i < a.num_traveler;)
     {
         printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
         while(1)
@@ -438,12 +438,12 @@ struct Customer getInformationFromUser()
             if(seat_counter[temp-1] == '1')
             {
                 printf("Seat not availalble. Select a valid seat.\n");
-                i--;
                 continue;
             }
             a.seats[temp - 1] = 1;
             break;
         }
+        i++;
     }
     printf("\n");
 
