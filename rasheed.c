@@ -376,19 +376,15 @@ struct Customer getInformationFromUser()
     scanf("%d", &a.govt_id);
     while(1)
     {
-        printf("Available dates of travel: 05062021 or 05072021\nSelect One: ");
+        printf("Available dates of travel: [1] 05062021 \n [2] 05072021\nSelect One: ");
         scanf("%d", &a.travel_date);
         
-        if(a.travel_date != 05062021 || a.travel_date != 05072021)
+        if(a.travel_date> 2)
         {
             printf("Choose a valid date.\n");
             continue;
         }
-
-        if(a.travel_date == 05062021)
-            a.travel_date = 1;
-        else
-            a.travel_date = 2;
+        break;
     }
 
     
@@ -439,9 +435,10 @@ struct Customer getInformationFromUser()
         {
             int temp;
             scanf("%d", &temp);
-            if(seat_counter[temp] == '1')
+            if(seat_counter[temp-1] == '1')
             {
                 printf("Seat not availalble. Select a valid seat.\n");
+                i--;
                 continue;
             }
             a.seats[temp - 1] = 1;
