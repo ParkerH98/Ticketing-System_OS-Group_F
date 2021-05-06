@@ -374,8 +374,23 @@ struct Customer getInformationFromUser()
     scanf(" %c", &a.gender);
     printf("Government ID: ");
     scanf("%d", &a.govt_id);
-    printf("Available dates of travel: 1 or 2.\nSelect One: ");
-    scanf("%d", &a.travel_date);
+    while(1)
+    {
+        printf("Available dates of travel: 05062021 or 05072021\nSelect One: ");
+        scanf("%d", &a.travel_date);
+        
+        if(a.travel_date != 05062021 || a.travel_date != 05072021)
+        {
+            printf("Choose a valid date.\n");
+            continue;
+        }
+
+        if(a.travel_date == 05062021)
+            a.travel_date = 1;
+        else
+            a.travel_date = 2;
+    }
+
     
     char train_filename[32];
     char Day[5];
@@ -420,9 +435,18 @@ struct Customer getInformationFromUser()
     for (int i = 0; i < a.num_traveler; i++)
     {
         printf("Choose seat for ticket %d/%d: ", i + 1, a.num_traveler);
-        int temp;
-        scanf("%d", &temp);
-        a.seats[temp - 1] = 1;
+        while(1)
+        {
+            int temp;
+            scanf("%d", &temp);
+            if(seat_counter[temp] == '1')
+            {
+                printf("Seat not availalble. Select a valid seat.\n");
+                continue;
+            }
+            a.seats[temp - 1] = 1;
+            break;
+        }
     }
     printf("\n");
 
