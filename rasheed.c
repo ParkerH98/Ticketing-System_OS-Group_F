@@ -376,7 +376,7 @@ struct Customer getInformationFromUser()
     scanf("%d", &a.govt_id);
     while(1)
     {
-        printf("Available dates of travel: [1] 05062021 \n [2] 05072021\nSelect One: ");
+        printf("Available dates of travel: [1] 05062021 [2] 05072021\nSelect One: ");
         scanf("%d", &a.travel_date);
         
         if(a.travel_date> 2)
@@ -435,7 +435,7 @@ struct Customer getInformationFromUser()
         {
             int temp;
             scanf("%d", &temp);
-            if(seat_counter[temp-1] == '1')
+            if(seats_counter[temp-1] == '1')
             {
                 printf("Seat not availalble. Select a valid seat.\n");
                 continue;
