@@ -1,63 +1,69 @@
+# OS-Group_F: Train Ticketing System
 
- # OS-Group_F Train Ticketing System
-
-Operating Systems Spring 2021 Group F Repository for Assignment03
+Course: Operating Systems, Spring 2023  
+Assignment: Group Project F - Multi-threaded Train Ticketing System
 
 ## Table of Contents
-- [OS-Group\_F Train Ticketing System](#os-group_f-train-ticketing-system)
+- [OS-Group\_F: Train Ticketing System](#os-group_f-train-ticketing-system)
   - [Table of Contents](#table-of-contents)
-  - [About](#about)
-  - [Installation](#installation)
+  - [About The Project](#about-the-project)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
   - [Usage](#usage)
     - [Server](#server)
     - [Client](#client)
-  - [Important Notes](#important-notes)
-  - [Repository Contents](#repository-contents)
+  - [Notes](#notes)
+  - [Repository Structure](#repository-structure)
     - [Program Files](#program-files)
   - [Contributors](#contributors)
 
-## About
-This repository contains a client-server program for a train ticket reservation system developed for our Operating Systems course in Spring 2023 (Group B). The program uses socket connections for client/server interactions, multi-threading, thread pool, semaphores, mutex locks, and priority scheduling to handle client requests in a train ticket reservation system.
+## About The Project
+The repository contains a train ticket reservation system implemented in C for the Operating Systems course, Spring 2023. The project is based on a client-server model, using socket connections for communication. The server utilizes multi-threading, a thread pool, semaphores, mutex locks, and priority scheduling to handle client requests effectively.
 
-## Installation
-To compile and run the program, you will need a C compiler like GCC. 
+## Getting Started
+
+### Prerequisites
+- GCC compiler
+
+### Installation
+1. Clone the repository.
+2. Navigate to the directory containing the source code.
+3. Use the `Makefile` for easy compilation of the program files.
 
 ## Usage
 
 ### Server
 
-1. Compile the server driver file with `make s`.
-2. Run the server with `./s`.
+1. Compile the server driver file using the command: `make s`.
+2. Run the server with: `./s`.
 
 ### Client
 
-1. Compile the client driver file with `make c`.
-2. Run the client with `./c`.
+1. Compile the client driver file using the command: `make c`.
+2. Run the client with: `./c`.
 
-## Important Notes
+## Notes
+- The program functionalities include ticket reservation, inquiry, modification, cancellation, and program exit.
+- The server prepares a summary file, initializes a mutex for thread pool operation, and spawns a certain number of server processes using fork.
+- 'Control + C' is required to stop the execution on both client and server ends.
 
-* The program handles ticket reservation, inquiry, modification, cancellation, and program exit.
-* Both the client and server require 'Control + C' to stop the program execution.
-* The client initiates a clientSocket send/receive operation with the server on a random port number within a certain range.
-* The server creates training files, prepares a summary file, initializes a mutex for thread pool operation, and spawns a certain number of server processes using fork.
-
-## Repository Contents
+## Repository Structure
 
 ### Program Files
 
-* `driver_client.c` - main() for client
-* `driver_server.c` - main() for server
-* `parker_client.c` - client-side logic file. Handles client's menu selection and performs different operations based on the selection. Establishes TCP connection with the server.
-* `parker_server.c` - server-side logic file. Handles request processing. Implements the thread pool, priority scheduling, server/client socket connection, and multi-threaded mutual exclusion.
-* `parker_utility.c` - utility file providing common functionalities used by both client and server.
-* `rasheed.c` - Contains functions and routines for creating, modifying, and cancelling a reservation for a train ticket.
-* `thomas.c` - Responsible for generating a receipt for the customer's order. The `sendReceiptToCust` function creates a receipt including customer's name, DOB, government ID, travel date, number of travelers, and selected seats, and sends this receipt to the client socket.
-* `header.h` - includes, global function, and struct definitions
-* `Makefile` - file for managing build automation.
+- `driver_client.c` - Entry point for client.
+- `driver_server.c` - Entry point for server.
+- `parker_client.c` - Handles client's menu selection and TCP connection with the server.
+- `parker_server.c` - Manages server-side request processing. Includes implementation of the thread pool, priority scheduling, and multi-threaded mutual exclusion.
+- `parker_utility.c` - Contains utility functions used by both client and server.
+- `rasheed.c` - Features routines for creating, modifying, and cancelling a train ticket reservation.
+- `thomas.c` - Creates and sends a receipt for the customer's order to the client socket.
+- `header.h` - Contains global function definitions and structure definitions.
+- `Makefile` - Used for build automation.
 
 ## Contributors
 
-1. Parker Hague
-2. Rasheed Abid
-3. Thomas
-
+1. Parker Hague: Main client and server-side logic, implementation of multi-threading, thread pool, priority scheduling, and socket connection.
+2. Rasheed Abid: Logic for creating, modifying, and cancelling a reservation for a train ticket.
+3. Thomas: Contribution to generating a receipt for the customer's order.
