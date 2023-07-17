@@ -1,6 +1,6 @@
 # OS-Group_F: Train Ticketing System
 
-Course: Operating Systems, Spring 2023  
+Course: Operating Systems, Spring 2021  
 Assignment: Group Project F - Multi-threaded Train Ticketing System
 
 ## Table of Contents
